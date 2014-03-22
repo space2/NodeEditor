@@ -9,20 +9,8 @@
 
 #include "NodeUI.h"
 
-static const char * kInputNames[] = {
-		"color",
-		"mask",
-};
-
-static const char * kOutputNames[] = {
-		"red",
-		"green",
-		"blue",
-		"alpha",
-};
-
-NodeUI::NodeUI(int x, int y, int w, int h, const char * l)
-	: Fl_Box(x, y, w, h, l)
+NodeUI::NodeUI(Node * node)
+	: Fl_Box(node->x(), node->y(), node->w(), node->h(), node->name()), _node(node)
 {
 	box(FL_UP_BOX);
 	labelsize(10);
@@ -34,28 +22,23 @@ NodeUI::~NodeUI() {
 
 int NodeUI::input_count() const
 {
-	// FIXME: hardcoded
-	return 2;
+	return _node->input_count();
 }
 
 int NodeUI::output_count() const
 {
-	// FIXME: hardcoded
-	return 4;
+	return _node->output_count();
 }
 
 const char * NodeUI::input_name(int idx) const
 {
-	// FIXME: hardcoded
-	return kInputNames[idx];
+	return _node->input(idx)->name();
 }
 
 const char * NodeUI::output_name(int idx) const
 {
-	// FIXME: hardcoded
-	return kOutputNames[idx];
+	return _node->output(idx)->name();
 }
-
 
 void NodeUI::draw()
 {

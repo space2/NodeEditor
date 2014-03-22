@@ -15,22 +15,50 @@ static const int kGridMajor = 10;
 static const int kGridMajorSize = 5;
 
 Workspace::Workspace(int x, int y, int w, int h, const char * l)
-	: Fl_Group(x, y, w, h, l)
+	: Fl_Group(x, y, w, h, l), _graph(new Graph("Untitled"))
 {
-	// FIXME: testing
-	new NodeUI(x + 100, y + 100, 100, 60, "Foobar");
-	// ---
 	end();
 }
 
 Workspace::~Workspace()
 {
+	clear();
+}
+
+void Workspace::clear()
+{
+	for (int i = children()-1; i >= 0; i--) {
+		remove(i);
+	}
+	_nodes.clear();
+	_conns.clear();
+	delete _graph;
+	_graph = NULL;
+}
+
+void Workspace::graph(Graph * graph)
+{
+	clear();
+	_graph = graph;
+
+	for (int i = 0; i < _graph->node_count(); i++) {
+		NodeUI * node = new NodeUI(_graph->node(i));
+		_nodes.add(node);
+		add(node);
+	}
+
+	for (int i = 0; i < _graph->connection_count(); i++) {
+		_conns.add(new ConnectionUI(_graph->connection(i)));
+	}
+
+	redraw();
 }
 
 void Workspace::draw()
 {
 	draw_background();
 	draw_children();
+	draw_connections();
 }
 
 int Workspace::handle(int event)
@@ -57,3 +85,28 @@ void Workspace::draw_background()
 	}
 }
 
+void Workspace::draw_connection(int x0, int y0, int x1, int y1, int col0, int col1)
+{
+	fl_line_style(FL_SOLID | FL_CAP_ROUND | FL_JOIN_ROUND, 3);
+	fl_color(col0);
+	fl_begin_line();
+	fl_curve(x0, y0, x0 + 100, y0, x1 - 100, y1, x1, y1);
+	fl_end_line();
+	fl_line_style(FL_SOLID | FL_CAP_ROUND | FL_JOIN_ROUND, 1);
+	fl_color(col1);
+	fl_begin_line();
+	fl_curve(x0, y0, x0 + 100, y0, x1 - 100, y1, x1, y1);
+	fl_end_line();
+}
+
+void Workspace::draw_connections()
+{
+	for (int i = 0; i < _conns.count(); i++) {
+		Connection * conn = _conns[i]->conn();
+		int x0 = conn->from()->output_x(conn->out_idx());
+		int y0 = conn->from()->output_y(conn->out_idx());
+		int x1 = conn->to()->input_x(conn->in_idx());
+		int y1 = conn->to()->input_y(conn->in_idx());
+		draw_connection(x0, y0, x1, y1, 58, 79);
+	}
+}

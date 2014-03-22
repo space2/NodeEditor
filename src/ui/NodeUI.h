@@ -10,9 +10,11 @@
 
 #include <FL/Fl_Box.H>
 
+#include "core/Node.h"
+
 class NodeUI: public Fl_Box {
 public:
-	NodeUI(int x, int y, int w, int h, const char * l = 0);
+	NodeUI(Node * node);
 	virtual ~NodeUI();
 
 	int input_count() const;
@@ -21,6 +23,8 @@ public:
 	const char * output_name(int idx) const;
 protected:
 	void draw();
+private:
+	Node * _node;
 };
 
 #endif /* NODEUI_H_ */

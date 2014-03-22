@@ -52,6 +52,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.assembler.macosx.exe.debug.880279736" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.macosx.exe.debug">
 								<option id="gnu.both.asm.option.include.paths.568455158" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/local/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/NodeEditor/src}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.367980241" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -61,8 +62,9 @@
 								<option id="gnu.cpp.compiler.macosx.exe.debug.option.debugging.level.1602671167" name="Debug Level" superClass="gnu.cpp.compiler.macosx.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1044578034" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/local/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/NodeEditor/src}&quot;"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.other.other.1553228161" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -MT&quot;$@&quot;" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.1553228161" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -MT&quot;$@&quot;" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.826190840" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug.1320125674" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug">
@@ -70,6 +72,7 @@
 								<option id="gnu.c.compiler.macosx.exe.debug.option.debugging.level.303126606" name="Debug Level" superClass="gnu.c.compiler.macosx.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1471024203" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/local/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/NodeEditor/src}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.593222806" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -118,6 +121,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.assembler.macosx.exe.release.1857090738" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.macosx.exe.release">
 								<option id="gnu.both.asm.option.include.paths.92195065" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/local/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/NodeEditor/src}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1843295602" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -127,6 +131,7 @@
 								<option id="gnu.cpp.compiler.macosx.exe.release.option.debugging.level.1358975486" name="Debug Level" superClass="gnu.cpp.compiler.macosx.exe.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1052877966" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/local/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/NodeEditor/src}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.683488690" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -135,6 +140,7 @@
 								<option id="gnu.c.compiler.macosx.exe.release.option.debugging.level.499097399" name="Debug Level" superClass="gnu.c.compiler.macosx.exe.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.723880957" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/local/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/NodeEditor/src}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1861961243" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
