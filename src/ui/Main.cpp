@@ -12,6 +12,21 @@
 static MainUI ui;
 static Fl_Native_File_Chooser file_chooser;
 
+static const char * kWindowTitle = "NodeEditor";
+
+static void update_window_title()
+{
+	Graph * graph = ui.workspace->graph();
+	const char * fn = graph->file_name();
+	char buff[256];
+	if (fn) {
+		snprintf(buff, sizeof(buff)-1, "%s - %s", kWindowTitle, fn);
+	} else {
+		snprintf(buff, sizeof(buff)-1, "%s", kWindowTitle);
+	}
+	ui.window->label(strdup(buff));
+}
+
 static void cb_win_open(Fl_Widget * w, void * d)
 {
 	// Confirm first
@@ -30,6 +45,7 @@ static void cb_win_open(Fl_Widget * w, void * d)
 			Graph * graph = new Graph("Untitled");
 			if (graph->load_from(fn)) {
 				ui.workspace->graph(graph);
+				update_window_title();
 			}
 		}
 	}
@@ -45,6 +61,7 @@ static void cb_win_save_as(Fl_Widget * w = NULL, void * d = NULL)
 		const char * fn = file_chooser.filename();
 		if (fn) {
 			ui.workspace->graph()->save_to(fn);
+			update_window_title();
 		}
 	}
 }
@@ -98,6 +115,7 @@ static void setup_graph()
 #endif
 
 	ui.workspace->graph(graph);
+	update_window_title();
 }
 
 static void setup_window()
