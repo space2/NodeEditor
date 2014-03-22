@@ -44,6 +44,17 @@ void Graph::add(Node * node)
 	_dirty = 1;
 }
 
+void Graph::remove(Node * node)
+{
+	for (int i = _conns.count()-1; i >= 0; i--) {
+		if (_conns[i]->from() == node || _conns[i]->to() == node) {
+			_conns.remove_at(i);
+		}
+	}
+	_nodes.remove(node);
+	_dirty = 1;
+}
+
 void Graph::add(Connection * conn)
 {
 	_conns.add(conn);
@@ -142,3 +153,4 @@ void Graph::calc_range(int & min_x, int & min_y, int & max_x, int & max_y)
 	max_x += kRangeExtra;
 	max_y += kRangeExtra;
 }
+

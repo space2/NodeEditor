@@ -64,6 +64,7 @@ private:
 	void add_connection(const NodeUI * from, int out_idx, const NodeUI * to, int in_idx);
 	const NodeUI * find_node(const Node * node);
 	void set_scrollbar_range();
+	void remove(NodeUI * nodeui);
 
 	int s2gx(int xx) { return xx - x() + _scroll_x; }
 	int s2gy(int yy) { return yy - y() + _scroll_y; }
@@ -84,6 +85,7 @@ private:
 	int _scroll_x, _scroll_y;
 	Fl_Scrollbar * _scr_h;
 	Fl_Scrollbar * _scr_v;
+	pugi::xml_document _clipboard;
 };
 
 #endif /* WORKSPACE_H_ */

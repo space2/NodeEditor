@@ -436,17 +436,59 @@ void Workspace::add_node(const char * name)
 
 void Workspace::cut()
 {
-	// TODO
+	copy();
+	if (!_sel_count) return;
+	for (int i = _nodes.count()-1; i >= 0; i--) {
+		if (!_nodes[i]->selected()) continue;
+		remove(_nodes[i]);
+	}
+	_sel_count = 0;
+	redraw();
 }
 
 void Workspace::copy()
 {
-	// TODO
+	if (!_sel_count) {
+		fl_alert("No nodes selected!");
+		return;
+	}
+	_clipboard.reset();
+	pugi::xml_node root = _clipboard.append_child("clipboard");
+	int cnt = _nodes.count();
+	for (int i = 0; i < cnt; i++) {
+		if (!_nodes[i]->selected()) continue;
+		Node * old = _nodes[i]->node();
+		pugi::xml_node n = root.append_child("node");
+		n.append_attribute("name").set_value(old->name());
+		n.append_attribute("x").set_value(old->x());
+		n.append_attribute("y").set_value(old->y());
+		old->save_to(n);
+	}
 }
 
 void Workspace::paste()
 {
-	// TODO
+	if (_clipboard.empty()) {
+		fl_alert("Empty clipboard!");
+		return;
+	}
+	unselect_all();
+	pugi::xml_node root = _clipboard.first_child();
+	pugi::xml_node child = root.first_child();
+	while (!child.empty()) {
+		const char * name = child.attribute("name").as_string();
+		int x = child.attribute("x").as_int() + 10;
+		int y = child.attribute("y").as_int() + 10;
+		Node * clone = new_node(name, x, y);
+		clone->load_from(child);
+		_graph->add(clone);
+		NodeUI * nodeui = new NodeUI(clone);
+		_nodes.add(nodeui);
+		nodeui->selected(1);
+		_sel_count++;
+		child = child.next_sibling();
+	}
+	redraw();
 }
 
 void Workspace::duplicate()
@@ -472,4 +514,17 @@ void Workspace::duplicate()
 		nodeui->selected(1);
 	}
 	redraw();
+}
+
+void Workspace::remove(NodeUI * nodeui)
+{
+	Node * node = nodeui->node();
+	for (int i = _conns.count()-1; i >= 0; i--) {
+		Connection * conn = _conns[i]->conn();
+		if (conn->from() == node || conn->to() == node) {
+			_conns.remove_at(i);
+		}
+	}
+	_graph->remove(node);
+	_nodes.remove(nodeui);
 }
