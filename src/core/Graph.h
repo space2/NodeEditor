@@ -28,6 +28,9 @@ public:
 	Connection * connection(int idx) { return _conns[idx]; }
 	const Connection * connection(int idx) const { return _conns[idx]; }
 	void remove(Connection * conn) { _conns.remove(conn); }
+
+	int save_to(const char * fn);
+	int load_from(const char * fn);
 private:
 	char * _name;
 	ArrayO<Node*> _nodes;

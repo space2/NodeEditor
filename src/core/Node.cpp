@@ -78,3 +78,15 @@ int Node::find_output(int x, int y)
 	if (ret < _outputs.count()) return ret;
 	return -1;
 }
+
+int Node::save_to(pugi::xml_node & node)
+{
+	// Placeholder for custom attributes
+	return 1;
+}
+
+int Node::load_from(pugi::xml_node & node)
+{
+	// Placeholder for custom attributes
+	return 1;
+}

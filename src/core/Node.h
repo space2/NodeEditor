@@ -8,6 +8,8 @@
 #ifndef NODE_H_
 #define NODE_H_
 
+#include "pugixml/pugixml.hpp"
+
 #include "Array.h"
 #include "Slot.h"
 
@@ -37,6 +39,9 @@ public:
 	int find_output(int x, int y);
 
 	void move(int dx, int dy);
+
+	virtual int save_to(pugi::xml_node & node);
+	virtual int load_from(pugi::xml_node & node);
 protected:
 	void add_output(Slot * slot) { _outputs.add(slot); }
 	void add_input(Slot * slot) { _inputs.add(slot); }

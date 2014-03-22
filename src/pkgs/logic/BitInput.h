@@ -17,6 +17,9 @@ public:
 
 	int value() const { return _val; }
 	void value(int val) { _val = val; }
+
+	virtual int save_to(pugi::xml_node & node);
+	virtual int load_from(pugi::xml_node & node);
 private:
 	int _val;
 };

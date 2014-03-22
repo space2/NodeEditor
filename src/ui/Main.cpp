@@ -33,6 +33,9 @@ static void setup()
 	graph->add(new Connection(inp3, 0, and_gate2, 1));
 	graph->add(new Connection(and_gate2, 0, out, 0));
 
+	// XXX: for testing, save to xml file
+	graph->save_to("tmp.xml");
+
 	ui.workspace->graph(graph);
 }
 

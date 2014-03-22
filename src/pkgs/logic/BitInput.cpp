@@ -17,3 +17,14 @@ BitInput::~BitInput()
 {
 }
 
+int BitInput::save_to(pugi::xml_node & node)
+{
+	node.append_attribute("val").set_value(_val);
+	return Node::save_to(node);
+}
+
+int BitInput::load_from(pugi::xml_node & node)
+{
+	_val = node.attribute("val").as_int(_val);
+	return Node::load_from(node);
+}
