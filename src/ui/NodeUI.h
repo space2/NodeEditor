@@ -28,8 +28,13 @@ public:
 	void highlighted(int v) { _high = v; update_color(); }
 
 	int inside(int mx, int my);
+	int find_input(int x, int y);
+	int find_output(int x, int y);
 
 	void move(int dx, int dy);
+
+	Node * node() { return _node; }
+	const Node * node() const { return _node; }
 protected:
 	void draw();
 private:

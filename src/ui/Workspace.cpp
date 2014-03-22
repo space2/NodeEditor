@@ -28,7 +28,9 @@ static int check_drag_dist(int dx, int dy)
 
 Workspace::Workspace(int x, int y, int w, int h, const char * l)
 	: Fl_Group(x, y, w, h, l), _graph(new Graph("Untitled")), _high(NULL),
-	  _start_x(0), _start_y(0), _sel_count(0), _state(Idle)
+	  _start_x(0), _start_y(0), _sel_count(0),
+	  _sel_conn_node(NULL), _sel_conn_idx(-1),
+	  _state(Idle)
 {
 	end();
 }
@@ -76,7 +78,7 @@ void Workspace::draw()
 
 int Workspace::handle(int event)
 {
-	int ret = 0;
+	int ret = 0, dx = 0, dy = 0;
 	NodeUI * node = NULL;
 	switch (event) {
 	case FL_ENTER:
@@ -100,16 +102,60 @@ int Workspace::handle(int event)
 		}
 		return 1;
 	case FL_DRAG:
-		int dx = Fl::event_x() - _start_x;
-		int dy = Fl::event_y() - _start_y;
+		dx = Fl::event_x() - _start_x;
+		dy = Fl::event_y() - _start_y;
 		if (_state == WaitForDrag && check_drag_dist(dx, dy)) {
-			_state = Drag;
+			node = find_node_below(_start_x, _start_y);
+			int in_idx = node->find_input(_start_x, _start_y);
+			int out_idx = node->find_output(_start_x, _start_y);
+			if (in_idx >= 0) {
+				ConnectionUI * conn = find_connection_to(node, in_idx);
+				if (conn) {
+					start_connection_drag(conn->conn()->from(), conn->conn()->out_idx(), DragIn);
+					delete_connection(conn);
+				} else {
+					start_connection_drag(node->node(), in_idx, DragOut);
+				}
+			} else if (out_idx >= 0) {
+				ConnectionUI * conn = find_connection_from(node, out_idx);
+				if (conn) {
+					start_connection_drag(conn->conn()->to(), conn->conn()->in_idx(), DragOut);
+					delete_connection(conn);
+				} else {
+					start_connection_drag(node->node(), out_idx, DragIn);
+				}
+			} else {
+				_state = Drag;
+			}
 		}
 		if (_state == Drag) {
 			drag_selected(dx, dy);
 			_start_x += dx;
 			_start_y += dy;
+		} else if (_state == DragIn || _state == DragOut) {
+			_start_x += dx;
+			_start_y += dy;
+			redraw();
 		}
+		return 1;
+	case FL_RELEASE:
+		if (_state == WaitForPan) {
+			// Clicked on the workspace, deselect everything
+			unselect_all();
+		} else if (_state == DragIn) {
+			node = find_node_below(_start_x, _start_y);
+			int in_idx = node ? node->find_input(_start_x, _start_y) : -1;
+			if (node && in_idx >= 0) {
+				add_connection(_sel_conn_node, _sel_conn_idx, node, in_idx);
+			}
+		} else if (_state == DragOut) {
+			node = find_node_below(_start_x, _start_y);
+			int out_idx = node ? node->find_output(_start_x, _start_y) : -1;
+			if (node && out_idx >= 0) {
+				add_connection(node, out_idx, _sel_conn_node, _sel_conn_idx);
+			}
+		}
+		_state = Idle;
 		return 1;
 	}
 	if (Fl_Group::handle(event)) ret = 1;
@@ -181,6 +227,18 @@ void Workspace::draw_connections()
 		int y1 = conn->to()->input_y(conn->in_idx());
 		draw_connection(x0, y0, x1, y1, 58, 79);
 	}
+
+	if (_state == DragIn) {
+		int x0 = _sel_conn_node->node()->output_x(_sel_conn_idx);
+		int y0 = _sel_conn_node->node()->output_y(_sel_conn_idx);
+		draw_connection(x0, y0, _start_x, _start_y, 72, 88);
+	}
+
+	if (_state == DragOut) {
+		int x0 = _sel_conn_node->node()->input_x(_sel_conn_idx);
+		int y0 = _sel_conn_node->node()->input_y(_sel_conn_idx);
+		draw_connection(_start_x, _start_y, x0, y0, 72, 88);
+	}
 }
 
 void Workspace::highlight(NodeUI * node)
@@ -211,4 +269,77 @@ void Workspace::select_node(NodeUI * node, int toggle)
 		_sel_count = 1;
 		redraw();
 	}
+}
+
+void Workspace::unselect_all()
+{
+	for (int i = 0; i < _nodes.count(); i++) {
+		_nodes[i]->selected(0);
+	}
+	_sel_count = 0;
+}
+
+ConnectionUI * Workspace::find_connection_to(const NodeUI * node, int in_idx)
+{
+	const Node * n = node->node();
+	for (int i = 0; i < _conns.count(); i++) {
+		Connection * conn = _conns[i]->conn();
+		if (conn->to() == n && conn->in_idx() == in_idx) {
+			return _conns[i];
+		}
+	}
+	return NULL;
+}
+
+ConnectionUI * Workspace::find_connection_from(const NodeUI * node, int out_idx)
+{
+	const Node * n = node->node();
+	for (int i = 0; i < _conns.count(); i++) {
+		Connection * conn = _conns[i]->conn();
+		if (conn->from() == n && conn->out_idx() == out_idx) {
+			return _conns[i];
+		}
+	}
+	return NULL;
+}
+
+void Workspace::start_connection_drag(const Node * node, int idx, State state)
+{
+	_sel_conn_node = find_node(node);
+	_sel_conn_idx = idx;
+	_state = state;
+	redraw();
+}
+
+void Workspace::delete_connection(ConnectionUI * conn)
+{
+	_graph->remove(conn->conn());
+	_conns.remove(conn);
+	redraw();
+}
+
+void Workspace::add_connection(const NodeUI * from, int out_idx, const NodeUI * to, int in_idx)
+{
+	// Need to remove old connection to the input
+	ConnectionUI * old = find_connection_to(to, in_idx);
+	if (old) {
+		delete_connection(old);
+	}
+
+	// Add new connection
+	Connection * conn = new Connection(from->node(), out_idx, to->node(), in_idx);
+	_graph->add(conn);
+	ConnectionUI * connui = new ConnectionUI(conn);
+	_conns.add(connui);
+	redraw();
+}
+
+const NodeUI * Workspace::find_node(const Node * node)
+{
+	for (int i = 0; i < _nodes.count(); i++) {
+		if (_nodes[i]->node() == node) {
+			return _nodes[i];
+		}
+	}
+	return NULL;
 }

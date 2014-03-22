@@ -26,6 +26,16 @@ protected:
 	void draw();
 	int handle(int event);
 private:
+	enum State {
+		Idle = 0,
+		WaitForDrag,
+		Drag,
+		DragIn,
+		DragOut,
+		WaitForPan,
+		Pan,
+	};
+
 	void draw_background();
 	void draw_connections();
 	void draw_connection(int x0, int y0, int x1, int y1, int col0, int col1);
@@ -34,20 +44,21 @@ private:
 	void highlight(NodeUI * node);
 	void select_node(NodeUI * node, int toggle);
 	void drag_selected(int dx, int dy);
+	ConnectionUI * find_connection_to(const NodeUI * node, int in_idx);
+	ConnectionUI * find_connection_from(const NodeUI * node, int out_idx);
+	void start_connection_drag(const Node * node, int idx, State state);
+	void unselect_all();
+	void delete_connection(ConnectionUI * conn);
+	void add_connection(const NodeUI * from, int out_idx, const NodeUI * to, int in_idx);
+	const NodeUI * find_node(const Node * node);
 
 	Graph * _graph;
 	ArrayO<NodeUI*> _nodes;
 	ArrayO<ConnectionUI*> _conns;
 	NodeUI * _high;
 	int _start_x, _start_y, _sel_count;
-
-	enum State {
-		Idle = 0,
-		WaitForDrag,
-		Drag,
-		WaitForPan,
-		Pan,
-	};
+	const NodeUI * _sel_conn_node;
+	int _sel_conn_idx;
 	State _state;
 };
 

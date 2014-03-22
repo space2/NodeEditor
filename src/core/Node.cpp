@@ -11,6 +11,7 @@ static const int kNodeWidth = 100;
 static const int kNodeBorder = 5;
 static const int kNodeHeader = 10;
 static const int kNodeSlotSize = 10;
+static const int kSlotAreaWidth = 30;
 
 Node::Node(int x, int y, const char * name)
 	: _x(x), _y(y), _name(name)
@@ -56,4 +57,24 @@ void Node::move(int dx, int dy)
 {
 	_x += dx;
 	_y += dy;
+}
+
+int Node::find_input(int x, int y)
+{
+	x -= _x;
+	y -= _y + kNodeBorder + kNodeHeader;
+	if (x < 0 || x > kSlotAreaWidth || y < 0) return -1;
+	int ret = y / kNodeSlotSize;
+	if (ret < _inputs.count()) return ret;
+	return -1;
+}
+
+int Node::find_output(int x, int y)
+{
+	x -= _x + kNodeWidth - kSlotAreaWidth;
+	y -= _y + kNodeBorder + kNodeHeader;
+	if (x < 0 || x > kSlotAreaWidth || y < 0) return -1;
+	int ret = y / kNodeSlotSize;
+	if (ret < _outputs.count()) return ret;
+	return -1;
 }

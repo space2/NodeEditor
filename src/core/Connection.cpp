@@ -7,7 +7,7 @@
 
 #include "Connection.h"
 
-Connection::Connection(Node * from, int out_idx, Node * to, int in_idx)
+Connection::Connection(const Node * from, int out_idx, const Node * to, int in_idx)
 	: _from(from), _to(to), _out_idx(out_idx), _in_idx(in_idx)
 {
 }

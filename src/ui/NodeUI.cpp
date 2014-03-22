@@ -84,6 +84,16 @@ int NodeUI::inside(int mx, int my)
 	return mx >= x() && my >= y() && mx < x() + w() && my < y() + h();
 }
 
+int NodeUI::find_input(int x, int y)
+{
+	return _node->find_input(x, y);
+}
+
+int NodeUI::find_output(int x, int y)
+{
+	return _node->find_output(x, y);
+}
+
 void NodeUI::update_color() {
 	if (_sel) {
 		color(_high ? 167 : 166);

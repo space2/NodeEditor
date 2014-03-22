@@ -33,6 +33,9 @@ public:
 	int output_x(int idx) const;
 	int output_y(int idx) const;
 
+	int find_input(int x, int y);
+	int find_output(int x, int y);
+
 	void move(int dx, int dy);
 protected:
 	void add_output(Slot * slot) { _outputs.add(slot); }
