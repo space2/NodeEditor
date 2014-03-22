@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<graph>
+	<node id="0" name="BitInput" x="10" y="10" val="0" />
+	<node id="1" name="BitInput" x="10" y="100" val="0" />
+	<node id="2" name="BitInput" x="10" y="190" val="0" />
+	<node id="3" name="And" x="200" y="100" />
+	<node id="4" name="And" x="300" y="200" />
+	<node id="5" name="BitOutput" x="490" y="200" />
+	<connection id="0" from="0" out="0" to="3" in="0" />
+	<connection id="1" from="1" out="0" to="3" in="1" />
+	<connection id="2" from="3" out="0" to="4" in="0" />
+	<connection id="3" from="2" out="0" to="4" in="1" />
+	<connection id="4" from="4" out="0" to="5" in="0" />
+</graph>

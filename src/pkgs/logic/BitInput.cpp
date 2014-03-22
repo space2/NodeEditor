@@ -6,6 +6,7 @@
  */
 
 #include "BitInput.h"
+#include "core/NodeFactory.h"
 
 BitInput::BitInput(int x, int y)
 	: Node(x, y, "BitInput"), _val(0)
@@ -28,3 +29,6 @@ int BitInput::load_from(pugi::xml_node & node)
 	_val = node.attribute("val").as_int(_val);
 	return Node::load_from(node);
 }
+
+REGISTER_NODE(Logic,BitInput,BitInput)
+

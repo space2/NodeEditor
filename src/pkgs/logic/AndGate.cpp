@@ -5,7 +5,8 @@
  *      Author: Pal Szasz <pal.szasz@gmail.com>
  */
 
-#include <pkgs/logic/AndGate.h>
+#include "pkgs/logic/AndGate.h"
+#include "core/NodeFactory.h"
 
 AndGate::AndGate(int x, int y)
 	: Node(x, y, "And")
@@ -19,3 +20,4 @@ AndGate::~AndGate()
 {
 }
 
+REGISTER_NODE(Logic,And,AndGate)

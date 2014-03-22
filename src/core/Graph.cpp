@@ -10,6 +10,7 @@
 #include <FL/fl_ask.H>
 
 #include "Graph.h"
+#include "NodeFactory.h"
 
 Graph::Graph(const char * name)
 	: _name(strdup(name))
@@ -18,6 +19,12 @@ Graph::Graph(const char * name)
 
 Graph::~Graph()
 {
+}
+
+void Graph::clear()
+{
+	_nodes.clear();
+	_conns.clear();
 }
 
 void Graph::add(Node * node)
@@ -61,6 +68,44 @@ int Graph::save_to(const char * fn)
 
 int Graph::load_from(const char * fn)
 {
-	// FIXME
-	return 0;
+	clear();
+	pugi::xml_document doc;
+	pugi::xml_parse_result ret = doc.load_file(fn);
+	if (ret.status != pugi::status_ok) {
+		fl_alert("Error parsing XML file: %s (err=%d)\n", fn, ret.status);
+		return 0;
+	}
+	pugi::xml_node root = doc.first_child();
+	if (0 != strcmp(root.name(), "graph")) {
+		fl_alert("Invalid XML file!\n(Root node is not <graph>!)");
+		return 0;
+	}
+	pugi::xml_node child = root.first_child();
+	while (!child.empty()) {
+		if (0 == strcmp(child.name(), "node")) {
+			const char * name = child.attribute("name").as_string();
+			int x = child.attribute("x").as_int();
+			int y = child.attribute("y").as_int();
+			Node * node = new_node(name, x, y);
+			if (!node) {
+				fl_alert("Cannot create node of type '%s'!", name);
+				return 0;
+			} else {
+				_nodes.add(node);
+				node->load_from(child);
+			}
+		} else if (0 == strcmp(child.name(), "connection")) {
+			int from = child.attribute("from").as_int();
+			int out_idx = child.attribute("out").as_int();
+			int to = child.attribute("to").as_int();
+			int in_idx = child.attribute("in").as_int();
+			Connection * conn = new Connection(_nodes[from], out_idx, _nodes[to], in_idx);
+			_conns.add(conn);
+		} else {
+			fl_alert("Invalid xml node: '%s'!", child.name());
+			return 0;
+		}
+		child = child.next_sibling();
+	}
+	return 1;
 }

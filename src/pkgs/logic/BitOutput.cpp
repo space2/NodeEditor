@@ -6,6 +6,7 @@
  */
 
 #include <pkgs/logic/BitOutput.h>
+#include "core/NodeFactory.h"
 
 BitOutput::BitOutput(int x, int y)
 	: Node(x, y, "BitOutput"), _val(0)
@@ -17,3 +18,4 @@ BitOutput::~BitOutput()
 {
 }
 
+REGISTER_NODE(Logic,BitOutput,BitOutput)

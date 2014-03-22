@@ -13,6 +13,9 @@ static void setup()
 {
 	Graph * graph = new Graph("Simple");
 
+#if 1
+	graph->load_from("data/example_logic_simple.xml");
+#else
 	BitInput * inp1 = new BitInput(10, 10);
 	BitInput * inp2 = new BitInput(10, 100);
 	BitInput * inp3 = new BitInput(10, 190);
@@ -32,9 +35,7 @@ static void setup()
 	graph->add(new Connection(and_gate1, 0, and_gate2, 0));
 	graph->add(new Connection(inp3, 0, and_gate2, 1));
 	graph->add(new Connection(and_gate2, 0, out, 0));
-
-	// XXX: for testing, save to xml file
-	graph->save_to("tmp.xml");
+#endif
 
 	ui.workspace->graph(graph);
 }

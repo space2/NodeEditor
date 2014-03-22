@@ -31,7 +31,10 @@ public:
 
 	int save_to(const char * fn);
 	int load_from(const char * fn);
+
 private:
+	void clear();
+
 	char * _name;
 	ArrayO<Node*> _nodes;
 	ArrayO<Connection*> _conns;
