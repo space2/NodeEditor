@@ -30,7 +30,7 @@ public:
 	int find_output(int x, int y);
 
 	void move(int dx, int dy);
-	void draw();
+	void draw(int dx, int dy);
 
 	Node * node() { return _node; }
 	const Node * node() const { return _node; }

@@ -38,9 +38,9 @@ const char * NodeUI::output_name(int idx) const
 	return _node->output(idx)->name();
 }
 
-void NodeUI::draw()
+void NodeUI::draw(int dx, int dy)
 {
-	int x = _node->x(), y = _node->y(), w = _node->w(), h = _node->h();
+	int x = _node->x() + dx, y = _node->y() + dy, w = _node->w(), h = _node->h();
 
 	// Render box
 	fl_draw_box(FL_UP_BOX, x, y, w, h, _color);

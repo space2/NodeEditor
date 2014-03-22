@@ -54,6 +54,11 @@ private:
 	void add_connection(const NodeUI * from, int out_idx, const NodeUI * to, int in_idx);
 	const NodeUI * find_node(const Node * node);
 
+	int s2gx(int xx) { return xx - x() + _scroll_x; }
+	int s2gy(int yy) { return yy - y() + _scroll_y; }
+	int g2sx(int xx) { return xx - _scroll_x + x(); }
+	int g2sy(int yy) { return yy - _scroll_y + y(); }
+
 	Graph * _graph;
 	ArrayO<NodeUI*> _nodes;
 	ArrayO<ConnectionUI*> _conns;
@@ -62,6 +67,7 @@ private:
 	const NodeUI * _sel_conn_node;
 	int _sel_conn_idx;
 	State _state;
+	int _scroll_x, _scroll_y;
 };
 
 #endif /* WORKSPACE_H_ */

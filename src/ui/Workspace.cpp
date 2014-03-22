@@ -30,7 +30,7 @@ Workspace::Workspace(int x, int y, int w, int h, const char * l)
 	: Fl_Widget(x, y, w, h, l), _graph(new Graph("Untitled")), _high(NULL),
 	  _start_x(0), _start_y(0), _sel_count(0),
 	  _sel_conn_node(NULL), _sel_conn_idx(-1),
-	  _state(Idle)
+	  _state(Idle), _scroll_x(0), _scroll_y(0)
 {
 }
 
@@ -66,14 +66,18 @@ void Workspace::graph(Graph * graph)
 
 void Workspace::draw()
 {
+	fl_push_clip(x(), y(), w(), h());
 	draw_background();
 	draw_nodes();
 	draw_connections();
+	fl_pop_clip();
 }
 
 int Workspace::handle(int event)
 {
 	int ret = 0, dx = 0, dy = 0, in_idx, out_idx;
+	int mx = s2gx(Fl::event_x());
+	int my = s2gy(Fl::event_y());
 	NodeUI * node = NULL;
 	switch (event) {
 	case FL_ENTER:
@@ -84,9 +88,9 @@ int Workspace::handle(int event)
 		fl_cursor(FL_CURSOR_DEFAULT);
 		break;
 	case FL_MOVE:
-		node = find_node_below(Fl::event_x(), Fl::event_y());
-		in_idx = node ? node->find_input(Fl::event_x(), Fl::event_y()) : -1;
-		out_idx = node ? node->find_output(Fl::event_x(), Fl::event_y()) : -1;
+		node = find_node_below(mx, my);
+		in_idx = node ? node->find_input(mx, my) : -1;
+		out_idx = node ? node->find_output(mx, my) : -1;
 		highlight(node);
 		if (in_idx >= 0 || out_idx >= 0) {
 			fl_cursor(FL_CURSOR_HAND);
@@ -98,8 +102,8 @@ int Workspace::handle(int event)
 		ret = 1;
 		break;
 	case FL_PUSH:
-		_start_x = Fl::event_x();
-		_start_y = Fl::event_y();
+		_start_x = mx;
+		_start_y = my;
 		node = find_node_below(_start_x, _start_y);
 		in_idx = node ? node->find_input(_start_x, _start_y) : -1;
 		out_idx = node ? node->find_output(_start_x, _start_y) : -1;
@@ -129,8 +133,8 @@ int Workspace::handle(int event)
 		}
 		return 1;
 	case FL_DRAG:
-		dx = Fl::event_x() - _start_x;
-		dy = Fl::event_y() - _start_y;
+		dx = mx - _start_x;
+		dy = my - _start_y;
 		if (_state == WaitForDrag && check_drag_dist(dx, dy)) {
 			_state = Drag;
 		}
@@ -193,6 +197,7 @@ NodeUI * Workspace::find_node_below(int x, int y)
 
 void Workspace::draw_background()
 {
+	// FIXME: scroll
 	fl_rectf(x(), y(), w(), h(), FL_BLACK);
 	fl_color(36);
 	for (int xx = x(); xx < x() + w(); xx += kGridSize) {
@@ -212,6 +217,10 @@ void Workspace::draw_background()
 
 void Workspace::draw_connection(int x0, int y0, int x1, int y1, int col0, int col1)
 {
+	x0 = g2sx(x0);
+	y0 = g2sy(y0);
+	x1 = g2sx(x1);
+	y1 = g2sy(y1);
 	fl_line_style(FL_SOLID | FL_CAP_ROUND | FL_JOIN_ROUND, 3);
 	fl_color(col0);
 	fl_begin_line();
@@ -227,7 +236,7 @@ void Workspace::draw_connection(int x0, int y0, int x1, int y1, int col0, int co
 void Workspace::draw_nodes()
 {
 	for (int i = 0; i < _nodes.count(); i++) {
-		_nodes[i]->draw();
+		_nodes[i]->draw(g2sx(0), g2sy(0));
 	}
 }
 
