@@ -237,20 +237,31 @@ NodeUI * Workspace::find_node_below(int x, int y)
 
 void Workspace::draw_background()
 {
-	// FIXME: scroll
 	fl_rectf(x(), y(), w(), h(), FL_BLACK);
 	fl_color(36);
-	for (int xx = x(); xx < x() + w(); xx += kGridSize) {
-		fl_line(xx, y(), xx, y() + h());
+
+	int x0 = _scroll_x, x1 = _scroll_x + w();
+	int y0 = _scroll_y, y1 = _scroll_y + h();
+
+	// Draw minor line
+	x0 -= (x0 % kGridSize);
+	y0 -= (y0 & kGridSize);
+	for (int xx = x0; xx < x1; xx += kGridSize) {
+		fl_line(g2sx(xx), y(), g2sx(xx), y() + h());
 	}
-	for (int yy = y(); yy < y() + h(); yy += kGridSize) {
-		fl_line(x(), yy, x() + w(), yy);
+	for (int yy = y0; yy < y1; yy += kGridSize) {
+		fl_line(x(), g2sy(yy), x() + w(), g2sy(yy));
 	}
+
+	// Draw major line
+	x0 -= (x0 % (kGridSize*kGridMajor));
+	y0 -= (y0 % (kGridSize*kGridMajor));
 	fl_color(40);
-	for (int xx = x(); xx < x() + w(); xx += kGridSize * kGridMajor) {
-		for (int yy = y(); yy < y() + h(); yy += kGridSize * kGridMajor) {
-			fl_line(xx - kGridMajorSize, yy, xx + kGridMajorSize, yy);
-			fl_line(xx, yy - kGridMajorSize, xx, yy + kGridMajorSize);
+	for (int xx = x0; xx < x1; xx += kGridSize * kGridMajor) {
+		for (int yy = y0; yy < y1; yy += kGridSize * kGridMajor) {
+			int sx = g2sx(xx), sy = g2sy(yy);
+			fl_line(sx - kGridMajorSize, sy, sx + kGridMajorSize, sy);
+			fl_line(sx, sy - kGridMajorSize, sx, sy + kGridMajorSize);
 		}
 	}
 }
