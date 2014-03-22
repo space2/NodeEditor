@@ -10,11 +10,13 @@
 #include "NodeUI.h"
 
 NodeUI::NodeUI(Node * node)
-	: Fl_Box(node->x(), node->y(), node->w(), node->h(), node->name()), _node(node)
+	: Fl_Box(node->x(), node->y(), node->w(), node->h(), node->name()),
+	  _node(node), _sel(0), _high(0)
 {
 	box(FL_UP_BOX);
 	labelsize(10);
 	align(FL_ALIGN_TOP | FL_ALIGN_INSIDE);
+	update_color();
 }
 
 NodeUI::~NodeUI() {
@@ -77,4 +79,16 @@ void NodeUI::draw()
 	}
 }
 
+int NodeUI::inside(int mx, int my)
+{
+	return mx >= x() && my >= y() && mx < x() + w() && my < y() + h();
+}
 
+void NodeUI::update_color() {
+	if (_sel) {
+		color(_high ? 72 : 166);
+	} else {
+		color(_high ? 51 : 49);
+	}
+
+}

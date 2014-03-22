@@ -5,6 +5,7 @@
  *      Author: Pal Szasz <pal.szasz@gmail.com>
  */
 
+#include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
 #include "Workspace.h"
@@ -15,7 +16,7 @@ static const int kGridMajor = 10;
 static const int kGridMajorSize = 5;
 
 Workspace::Workspace(int x, int y, int w, int h, const char * l)
-	: Fl_Group(x, y, w, h, l), _graph(new Graph("Untitled"))
+	: Fl_Group(x, y, w, h, l), _graph(new Graph("Untitled")), _high(NULL)
 {
 	end();
 }
@@ -63,7 +64,29 @@ void Workspace::draw()
 
 int Workspace::handle(int event)
 {
-	return Fl_Group::handle(event);
+	int ret = 0;
+	switch (event) {
+	case FL_ENTER:
+		ret = 1;
+		break;
+	case FL_MOVE:
+		highlight(find_node_below(Fl::event_x(), Fl::event_y()));
+		ret = 1;
+		break;
+	}
+	if (Fl_Group::handle(event)) ret = 1;
+	return ret;
+}
+
+NodeUI * Workspace::find_node_below(int x, int y)
+{
+	for (int i = 0; i < _nodes.count(); i++) {
+		NodeUI * node = _nodes[i];
+		if (node->inside(x, y)) {
+			return node;
+		}
+	}
+	return NULL;
 }
 
 void Workspace::draw_background()
@@ -109,4 +132,16 @@ void Workspace::draw_connections()
 		int y1 = conn->to()->input_y(conn->in_idx());
 		draw_connection(x0, y0, x1, y1, 58, 79);
 	}
+}
+
+void Workspace::highlight(NodeUI * node)
+{
+	if (_high) {
+		_high->highlighted(0);
+	}
+	_high = node;
+	if (_high) {
+		_high->highlighted(1);
+	}
+	redraw();
 }

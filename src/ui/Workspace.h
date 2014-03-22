@@ -30,10 +30,13 @@ private:
 	void draw_connections();
 	void draw_connection(int x0, int y0, int x1, int y1, int col0, int col1);
 	void clear();
+	NodeUI * find_node_below(int x, int y);
+	void highlight(NodeUI * node);
 
 	Graph * _graph;
 	ArrayO<NodeUI*> _nodes;
 	ArrayO<ConnectionUI*> _conns;
+	NodeUI * _high;
 };
 
 #endif /* WORKSPACE_H_ */
