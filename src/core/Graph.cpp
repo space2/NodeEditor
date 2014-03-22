@@ -10,7 +10,10 @@
 #include <FL/fl_ask.H>
 
 #include "Graph.h"
+#include "Util.h"
 #include "NodeFactory.h"
+
+static const int kRangeExtra = 100;
 
 Graph::Graph(const char * name)
 	: _name(strdup(name)), _file_name(NULL), _dirty(0)
@@ -122,4 +125,20 @@ int Graph::load_from(const char * fn)
 	file_name(fn);
 	_dirty = 0;
 	return 1;
+}
+
+void Graph::calc_range(int & min_x, int & min_y, int & max_x, int & max_y)
+{
+	min_x = min_y = max_x = max_y = 0;
+	for (int i = 0; i < _nodes.count(); i++) {
+		Node * node = _nodes[i];
+		min_x = Util::min(min_x, node->x());
+		min_y = Util::min(min_y, node->y());
+		max_x = Util::max(max_x, node->x() + node->w());
+		max_y = Util::max(max_y, node->y() + node->h());
+	}
+	min_x -= kRangeExtra;
+	min_y -= kRangeExtra;
+	max_x += kRangeExtra;
+	max_y += kRangeExtra;
 }

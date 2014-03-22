@@ -125,6 +125,7 @@ static void setup_window()
 	ui.mnu_file_saveas->callback(cb_win_save_as);
 	ui.mnu_file_exit->callback(cb_win_close);
 	ui.window->callback(cb_win_close);
+	ui.workspace->scrollbars(ui.scroll_h, ui.scroll_v);
 }
 
 int main(int argc, const char * argv[])

@@ -30,7 +30,8 @@ Workspace::Workspace(int x, int y, int w, int h, const char * l)
 	: Fl_Widget(x, y, w, h, l), _graph(new Graph("Untitled")), _high(NULL),
 	  _start_x(0), _start_y(0), _sel_count(0),
 	  _sel_conn_node(NULL), _sel_conn_idx(-1),
-	  _state(Idle), _scroll_x(0), _scroll_y(0)
+	  _state(Idle), _scroll_x(0), _scroll_y(0),
+	  _scr_h(NULL), _scr_v(NULL)
 {
 }
 
@@ -47,6 +48,39 @@ void Workspace::clear()
 	_graph = NULL;
 }
 
+void Workspace::scrollbars(Fl_Scrollbar * h, Fl_Scrollbar * v)
+{
+	_scr_h = h;
+	_scr_v = v;
+	set_scrollbar_range();
+	_scr_h->callback(cb_scroll_x, this);
+	_scr_v->callback(cb_scroll_y, this);
+}
+
+void Workspace::cb_scroll_x(Fl_Widget * w, void * d)
+{
+	Workspace * thiz = (Workspace*) d;
+	thiz->_scroll_x = thiz->_scr_h->value();
+	thiz->redraw();
+}
+
+void Workspace::cb_scroll_y(Fl_Widget * w, void * d)
+{
+	Workspace * thiz = (Workspace*) d;
+	thiz->_scroll_y = thiz->_scr_v->value();
+	thiz->redraw();
+}
+
+void Workspace::set_scrollbar_range()
+{
+	if (!_graph || !_scr_h || !_scr_v) return;
+	int minx, miny, maxx, maxy;
+	_graph->calc_range(minx, miny, maxx, maxy);
+	_scr_h->value(_scroll_x, w(), minx, maxx - minx);
+	_scr_v->value(_scroll_y, h(), miny, maxy - miny);
+}
+
+
 void Workspace::graph(Graph * graph)
 {
 	clear();
@@ -61,6 +95,7 @@ void Workspace::graph(Graph * graph)
 		_conns.add(new ConnectionUI(_graph->connection(i)));
 	}
 
+	set_scrollbar_range();
 	redraw();
 }
 
@@ -164,6 +199,8 @@ int Workspace::handle(int event)
 			if (node && out_idx >= 0) {
 				add_connection(node, out_idx, _sel_conn_node, _sel_conn_idx);
 			}
+		} else if (_state == Drag) {
+			set_scrollbar_range();
 		}
 		_state = Idle;
 		redraw();

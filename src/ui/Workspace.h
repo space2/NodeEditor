@@ -9,6 +9,7 @@
 #define WORKSPACE_H_
 
 #include <FL/Fl_Widget.H>
+#include <FL/Fl_Scrollbar.H>
 
 #include "core/Graph.h"
 #include "core/Array.h"
@@ -23,6 +24,8 @@ public:
 
 	void graph(Graph * graph);
 	Graph * graph() { return _graph; }
+
+	void scrollbars(Fl_Scrollbar * h, Fl_Scrollbar * v);
 protected:
 	void draw();
 	int handle(int event);
@@ -53,11 +56,15 @@ private:
 	void delete_connection(ConnectionUI * conn);
 	void add_connection(const NodeUI * from, int out_idx, const NodeUI * to, int in_idx);
 	const NodeUI * find_node(const Node * node);
+	void set_scrollbar_range();
 
 	int s2gx(int xx) { return xx - x() + _scroll_x; }
 	int s2gy(int yy) { return yy - y() + _scroll_y; }
 	int g2sx(int xx) { return xx - _scroll_x + x(); }
 	int g2sy(int yy) { return yy - _scroll_y + y(); }
+
+	static void cb_scroll_x(Fl_Widget * w, void * d);
+	static void cb_scroll_y(Fl_Widget * w, void * d);
 
 	Graph * _graph;
 	ArrayO<NodeUI*> _nodes;
@@ -68,6 +75,8 @@ private:
 	int _sel_conn_idx;
 	State _state;
 	int _scroll_x, _scroll_y;
+	Fl_Scrollbar * _scr_h;
+	Fl_Scrollbar * _scr_v;
 };
 
 #endif /* WORKSPACE_H_ */
