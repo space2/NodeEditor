@@ -226,7 +226,7 @@ void Workspace::drag_selected(int dx, int dy)
 
 NodeUI * Workspace::find_node_below(int x, int y)
 {
-	for (int i = 0; i < _nodes.count(); i++) {
+	for (int i = _nodes.count()-1; i >= 0; i--) {
 		NodeUI * node = _nodes[i];
 		if (node->inside(x, y)) {
 			return node;
