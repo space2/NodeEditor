@@ -32,11 +32,23 @@ private:
 	void clear();
 	NodeUI * find_node_below(int x, int y);
 	void highlight(NodeUI * node);
+	void select_node(NodeUI * node, int toggle);
+	void drag_selected(int dx, int dy);
 
 	Graph * _graph;
 	ArrayO<NodeUI*> _nodes;
 	ArrayO<ConnectionUI*> _conns;
 	NodeUI * _high;
+	int _start_x, _start_y, _sel_count;
+
+	enum State {
+		Idle = 0,
+		WaitForDrag,
+		Drag,
+		WaitForPan,
+		Pan,
+	};
+	State _state;
 };
 
 #endif /* WORKSPACE_H_ */

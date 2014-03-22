@@ -33,6 +33,7 @@ public:
 	int output_x(int idx) const;
 	int output_y(int idx) const;
 
+	void move(int dx, int dy);
 protected:
 	void add_output(Slot * slot) { _outputs.add(slot); }
 	void add_input(Slot * slot) { _inputs.add(slot); }

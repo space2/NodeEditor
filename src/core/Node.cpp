@@ -51,3 +51,9 @@ int Node::output_y(int idx) const
 {
 	return _y + kNodeBorder + kNodeHeader + kNodeSlotSize * idx + kNodeSlotSize/2;
 }
+
+void Node::move(int dx, int dy)
+{
+	_x += dx;
+	_y += dy;
+}

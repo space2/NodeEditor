@@ -28,6 +28,8 @@ public:
 	void highlighted(int v) { _high = v; update_color(); }
 
 	int inside(int mx, int my);
+
+	void move(int dx, int dy);
 protected:
 	void draw();
 private:

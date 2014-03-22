@@ -8,6 +8,8 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
+#include "core/Util.h"
+
 #include "Workspace.h"
 #include "NodeUI.h"
 
@@ -15,8 +17,18 @@ static const int kGridSize = 10;
 static const int kGridMajor = 10;
 static const int kGridMajorSize = 5;
 
+static const int kDragTreshold = 10;
+
+static int check_drag_dist(int dx, int dy)
+{
+	if (Util::abs(dx) > kDragTreshold) return 1;
+	if (Util::abs(dy) > kDragTreshold) return 1;
+	return 0;
+}
+
 Workspace::Workspace(int x, int y, int w, int h, const char * l)
-	: Fl_Group(x, y, w, h, l), _graph(new Graph("Untitled")), _high(NULL)
+	: Fl_Group(x, y, w, h, l), _graph(new Graph("Untitled")), _high(NULL),
+	  _start_x(0), _start_y(0), _sel_count(0), _state(Idle)
 {
 	end();
 }
@@ -65,6 +77,7 @@ void Workspace::draw()
 int Workspace::handle(int event)
 {
 	int ret = 0;
+	NodeUI * node = NULL;
 	switch (event) {
 	case FL_ENTER:
 		ret = 1;
@@ -73,9 +86,45 @@ int Workspace::handle(int event)
 		highlight(find_node_below(Fl::event_x(), Fl::event_y()));
 		ret = 1;
 		break;
+	case FL_PUSH:
+		_start_x = Fl::event_x();
+		_start_y = Fl::event_y();
+		node = find_node_below(_start_x, _start_y);
+		if (node) {
+			select_node(node, Fl::event_shift());
+			if (_sel_count) {
+				_state = WaitForDrag;
+			}
+		} else {
+			_state = WaitForPan;
+		}
+		return 1;
+	case FL_DRAG:
+		int dx = Fl::event_x() - _start_x;
+		int dy = Fl::event_y() - _start_y;
+		if (_state == WaitForDrag && check_drag_dist(dx, dy)) {
+			_state = Drag;
+		}
+		if (_state == Drag) {
+			drag_selected(dx, dy);
+			_start_x += dx;
+			_start_y += dy;
+		}
+		return 1;
 	}
 	if (Fl_Group::handle(event)) ret = 1;
 	return ret;
+}
+
+void Workspace::drag_selected(int dx, int dy)
+{
+	for (int i = 0; i < _nodes.count(); i++) {
+		NodeUI * node = _nodes[i];
+		if (node->selected()) {
+			node->move(dx, dy);
+		}
+	}
+	redraw();
 }
 
 NodeUI * Workspace::find_node_below(int x, int y)
@@ -144,4 +193,22 @@ void Workspace::highlight(NodeUI * node)
 		_high->highlighted(1);
 	}
 	redraw();
+}
+
+void Workspace::select_node(NodeUI * node, int toggle)
+{
+	if (!node) return;
+	if (toggle) {
+		node->selected(!node->selected());
+		_sel_count += node->selected() ? 1 : -1;
+		redraw();
+	} else {
+		if (node->selected()) return; // NOP
+		for (int i = 0; i < _nodes.count(); i++) {
+			_nodes[i]->selected(0);
+		}
+		node->selected(1);
+		_sel_count = 1;
+		redraw();
+	}
 }

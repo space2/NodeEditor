@@ -86,9 +86,14 @@ int NodeUI::inside(int mx, int my)
 
 void NodeUI::update_color() {
 	if (_sel) {
-		color(_high ? 72 : 166);
+		color(_high ? 167 : 166);
 	} else {
 		color(_high ? 51 : 49);
 	}
+}
 
+void NodeUI::move(int dx, int dy)
+{
+	_node->move(dx, dy);
+	position(x() + dx, y() + dy);
 }
