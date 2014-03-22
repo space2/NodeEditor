@@ -17,6 +17,8 @@ public:
 protected:
 	void draw();
 	int handle(int event);
+private:
+	void draw_background();
 };
 
 #endif /* WORKSPACE_H_ */
