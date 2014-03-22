@@ -8,11 +8,9 @@
 #ifndef NODEUI_H_
 #define NODEUI_H_
 
-#include <FL/Fl_Box.H>
-
 #include "core/Node.h"
 
-class NodeUI: public Fl_Box {
+class NodeUI {
 public:
 	NodeUI(Node * node);
 	virtual ~NodeUI();
@@ -32,15 +30,16 @@ public:
 	int find_output(int x, int y);
 
 	void move(int dx, int dy);
+	void draw();
 
 	Node * node() { return _node; }
 	const Node * node() const { return _node; }
-protected:
-	void draw();
+
 private:
 	void update_color();
 
 	Node * _node;
+	int _color;
 	int _sel, _high;
 };
 

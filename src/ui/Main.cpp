@@ -1,4 +1,6 @@
 #include <FL/Fl.H>
+#include <FL/fl_ask.H>
+#include <FL/Fl_Native_File_Chooser.H>
 
 #include "core/Graph.h"
 #include "pkgs/logic/BitInput.h"
@@ -8,8 +10,66 @@
 #include "MainUI.h"
 
 static MainUI ui;
+static Fl_Native_File_Chooser file_chooser;
 
-static void setup()
+static void cb_win_open(Fl_Widget * w, void * d)
+{
+	// Confirm first
+	if (ui.workspace->graph()->dirty()) {
+		int ret = fl_choice("Are you sure you want to open a new file?\nThere are unsaved changes which will be lost!", "Cancel", "Yes", NULL);
+		if (!ret) return;
+	}
+
+	// Pick new file
+	file_chooser.title("Open file:");
+	file_chooser.type(Fl_Native_File_Chooser::BROWSE_FILE);
+	file_chooser.filter("Node XML files\t*.xml\nAll files\t*");
+	if (file_chooser.show() == 0) {
+		const char * fn = file_chooser.filename();
+		if (fn) {
+			Graph * graph = new Graph("Untitled");
+			if (graph->load_from(fn)) {
+				ui.workspace->graph(graph);
+			}
+		}
+	}
+}
+
+static void cb_win_save_as(Fl_Widget * w = NULL, void * d = NULL)
+{
+	// Pick new file
+	file_chooser.title("Save file as:");
+	file_chooser.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+	file_chooser.filter("Node XML files\t*.xml\nAll files\t*");
+	if (file_chooser.show() == 0) {
+		const char * fn = file_chooser.filename();
+		if (fn) {
+			ui.workspace->graph()->save_to(fn);
+		}
+	}
+}
+
+static void cb_win_save(Fl_Widget * w = NULL, void * d = NULL)
+{
+	Graph * graph = ui.workspace->graph();
+	const char * fn = graph->file_name();
+	if (fn) {
+		graph->save_to(fn);
+	} else {
+		cb_win_save_as();
+	}
+}
+
+static void cb_win_close(Fl_Widget * w, void * d)
+{
+	if (ui.workspace->graph()->dirty()) {
+		int ret = fl_choice("Are you sure you want to exit?\nThere are unsaved changes which will be lost!", "Cancel", "Yes", NULL);
+		if (!ret) return;
+	}
+	ui.window->hide();
+}
+
+static void setup_graph()
 {
 	Graph * graph = new Graph("Simple");
 
@@ -40,12 +100,23 @@ static void setup()
 	ui.workspace->graph(graph);
 }
 
+static void setup_window()
+{
+	ui.mnu_file_open->callback(cb_win_open);
+	ui.mnu_file_save->callback(cb_win_save);
+	ui.mnu_file_saveas->callback(cb_win_save_as);
+	ui.mnu_file_exit->callback(cb_win_close);
+	ui.window->callback(cb_win_close);
+}
+
 int main(int argc, const char * argv[])
 {
 	Fl::lock();
 	Fl::scheme("gtk+");
-	ui.make_window()->show();
-	setup();
+	ui.make_window();
+	setup_graph();
+	setup_window();
+	ui.window->show();
 	Fl::run();
 	return 0;
 }

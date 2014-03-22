@@ -13,12 +13,20 @@
 #include "NodeFactory.h"
 
 Graph::Graph(const char * name)
-	: _name(strdup(name))
+	: _name(strdup(name)), _file_name(NULL), _dirty(0)
 {
 }
 
 Graph::~Graph()
 {
+	if (_name) free(_name);
+	if (_file_name) free(_file_name);
+}
+
+void Graph::file_name(const char * fn)
+{
+	if (_file_name) free(_file_name);
+	_file_name = strdup(fn);
 }
 
 void Graph::clear()
@@ -30,11 +38,13 @@ void Graph::clear()
 void Graph::add(Node * node)
 {
 	_nodes.add(node);
+	_dirty = 1;
 }
 
 void Graph::add(Connection * conn)
 {
 	_conns.add(conn);
+	_dirty = 1;
 }
 
 int Graph::save_to(const char * fn)
@@ -63,6 +73,8 @@ int Graph::save_to(const char * fn)
 		fl_alert("Error saving file!");
 		return 0;
 	}
+	file_name(fn);
+	_dirty = 0;
 	return 1;
 }
 
@@ -107,5 +119,7 @@ int Graph::load_from(const char * fn)
 		}
 		child = child.next_sibling();
 	}
+	file_name(fn);
+	_dirty = 0;
 	return 1;
 }

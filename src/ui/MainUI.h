@@ -5,11 +5,23 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include "Workspace.h"
+#include <FL/Fl_Menu_Bar.H>
+#include <FL/Fl_Scrollbar.H>
+#include <FL/Fl_Tile.H>
+#include <FL/Fl_Tree.H>
+#include <FL/Fl_Table.H>
 
 class MainUI {
 public:
   Fl_Double_Window* make_window();
   Fl_Double_Window *window;
   Workspace *workspace;
+  static Fl_Menu_Item menu_[];
+  static Fl_Menu_Item *mnu_file_open;
+  static Fl_Menu_Item *mnu_file_save;
+  static Fl_Menu_Item *mnu_file_saveas;
+  static Fl_Menu_Item *mnu_file_exit;
+  Fl_Scrollbar *scroll_h;
+  Fl_Scrollbar *scroll_v;
 };
 #endif

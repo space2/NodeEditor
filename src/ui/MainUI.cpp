@@ -2,10 +2,24 @@
 
 #include "MainUI.h"
 
+Fl_Menu_Item MainUI::menu_[] = {
+ {"&File", 0,  0, 0, 64, FL_NORMAL_LABEL, 0, 14, 0},
+ {"&Open...", 0x40006f,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {"&Save", 0x400073,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {"Save &as...", 0x410073,  0, 0, 128, FL_NORMAL_LABEL, 0, 14, 0},
+ {"E&xit", 0x400071,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {0,0,0,0,0,0,0,0,0},
+ {0,0,0,0,0,0,0,0,0}
+};
+Fl_Menu_Item* MainUI::mnu_file_open = MainUI::menu_ + 1;
+Fl_Menu_Item* MainUI::mnu_file_save = MainUI::menu_ + 2;
+Fl_Menu_Item* MainUI::mnu_file_saveas = MainUI::menu_ + 3;
+Fl_Menu_Item* MainUI::mnu_file_exit = MainUI::menu_ + 4;
+
 Fl_Double_Window* MainUI::make_window() {
   { window = new Fl_Double_Window(800, 600, "NodeEditor");
     window->user_data((void*)(this));
-    { workspace = new Workspace(0, 0, 600, 600);
+    { workspace = new Workspace(0, 20, 600, 565);
       workspace->box(FL_THIN_DOWN_BOX);
       workspace->color(FL_BACKGROUND_COLOR);
       workspace->selection_color(FL_BACKGROUND_COLOR);
@@ -15,7 +29,27 @@ Fl_Double_Window* MainUI::make_window() {
       workspace->labelcolor(FL_FOREGROUND_COLOR);
       workspace->align(Fl_Align(FL_ALIGN_CENTER));
       workspace->when(FL_WHEN_RELEASE);
+      Fl_Group::current()->resizable(workspace);
     } // Workspace* workspace
+    { Fl_Menu_Bar* o = new Fl_Menu_Bar(0, 0, 800, 20);
+      o->menu(menu_);
+    } // Fl_Menu_Bar* o
+    { scroll_h = new Fl_Scrollbar(0, 585, 600, 15);
+      scroll_h->type(1);
+    } // Fl_Scrollbar* scroll_h
+    { scroll_v = new Fl_Scrollbar(600, 20, 15, 565);
+    } // Fl_Scrollbar* scroll_v
+    { Fl_Tile* o = new Fl_Tile(615, 20, 185, 580);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+      { Fl_Tree* o = new Fl_Tree(615, 20, 185, 300);
+        o->color(FL_BACKGROUND_COLOR);
+      } // Fl_Tree* o
+      { Fl_Table* o = new Fl_Table(615, 320, 185, 280);
+        o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+        o->end();
+      } // Fl_Table* o
+      o->end();
+    } // Fl_Tile* o
     window->end();
   } // Fl_Double_Window* window
   return window;

@@ -7,13 +7,54 @@ class MainUI {open
   Function {make_window()} {open
   } {
     Fl_Window window {
-      label NodeEditor open selected
-      xywh {324 195 800 600} type Double visible
+      label NodeEditor open
+      xywh {334 181 800 600} type Double resizable visible
     } {
       Fl_Box workspace {
-        xywh {0 0 600 600} box THIN_DOWN_BOX
+        xywh {0 20 600 565} box THIN_DOWN_BOX resizable
         code0 {\#include "Workspace.h"}
         class Workspace
+      }
+      Fl_Menu_Bar {} {open
+        xywh {0 0 800 20}
+      } {
+        Submenu {} {
+          label {&File} open
+          xywh {0 0 100 20}
+        } {
+          MenuItem mnu_file_open {
+            label {&Open...}
+            xywh {0 0 100 20} shortcut 0x40006f
+          }
+          MenuItem mnu_file_save {
+            label {&Save}
+            xywh {0 0 100 20} shortcut 0x400073
+          }
+          MenuItem mnu_file_saveas {
+            label {Save &as...}
+            xywh {0 0 100 20} shortcut 0x410073 divider
+          }
+          MenuItem mnu_file_exit {
+            label {E&xit}
+            xywh {0 0 100 20} shortcut 0x400071
+          }
+        }
+      }
+      Fl_Scrollbar scroll_h {
+        xywh {0 585 600 15} type Horizontal
+      }
+      Fl_Scrollbar scroll_v {
+        xywh {600 20 15 565}
+      }
+      Fl_Tile {} {open
+        xywh {615 20 185 580} align 5
+      } {
+        Fl_Tree {} {selected
+          xywh {615 20 185 300} color 49
+        }
+        Fl_Table {} {open
+          xywh {615 320 185 280} align 5
+        } {}
       }
     }
   }
