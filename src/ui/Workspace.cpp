@@ -7,8 +7,10 @@
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_ask.H>
 
 #include "core/Util.h"
+#include "core/NodeFactory.h"
 
 #include "Workspace.h"
 #include "NodeUI.h"
@@ -201,6 +203,7 @@ int Workspace::handle(int event)
 			}
 		} else if (_state == Drag) {
 			set_scrollbar_range();
+			_graph->dirty(1);
 		}
 		_state = Idle;
 		redraw();
@@ -403,4 +406,19 @@ const NodeUI * Workspace::find_node(const Node * node)
 		}
 	}
 	return NULL;
+}
+
+void Workspace::add_node(const char * name)
+{
+	int x = _scroll_x + w() / 2;
+	int y = _scroll_y + h() / 2;
+	Node * node = new_node(name, x, y);
+	if (!node) {
+		fl_alert("Internal error: cannot create node!");
+		return;
+	}
+	_graph->add(node);
+	NodeUI * nodeui = new NodeUI(node);
+	_nodes.add(nodeui);
+	redraw();
 }

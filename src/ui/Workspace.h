@@ -26,6 +26,8 @@ public:
 	Graph * graph() { return _graph; }
 
 	void scrollbars(Fl_Scrollbar * h, Fl_Scrollbar * v);
+
+	void add_node(const char * name);
 protected:
 	void draw();
 	int handle(int event);

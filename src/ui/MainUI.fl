@@ -49,10 +49,10 @@ class MainUI {open
       Fl_Tile {} {open
         xywh {615 20 185 580} align 5
       } {
-        Fl_Tree {} {selected
+        Fl_Tree node_tree {
           xywh {615 20 185 300} color 49
         }
-        Fl_Table {} {open
+        Fl_Table properties {open selected
           xywh {615 320 185 280} align 5
         } {}
       }

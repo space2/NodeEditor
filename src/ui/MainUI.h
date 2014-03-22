@@ -23,5 +23,7 @@ public:
   static Fl_Menu_Item *mnu_file_exit;
   Fl_Scrollbar *scroll_h;
   Fl_Scrollbar *scroll_v;
+  Fl_Tree *node_tree;
+  Fl_Table *properties;
 };
 #endif

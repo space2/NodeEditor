@@ -41,13 +41,13 @@ Fl_Double_Window* MainUI::make_window() {
     } // Fl_Scrollbar* scroll_v
     { Fl_Tile* o = new Fl_Tile(615, 20, 185, 580);
       o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-      { Fl_Tree* o = new Fl_Tree(615, 20, 185, 300);
-        o->color(FL_BACKGROUND_COLOR);
-      } // Fl_Tree* o
-      { Fl_Table* o = new Fl_Table(615, 320, 185, 280);
-        o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-        o->end();
-      } // Fl_Table* o
+      { node_tree = new Fl_Tree(615, 20, 185, 300);
+        node_tree->color(FL_BACKGROUND_COLOR);
+      } // Fl_Tree* node_tree
+      { properties = new Fl_Table(615, 320, 185, 280);
+        properties->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+        properties->end();
+      } // Fl_Table* properties
       o->end();
     } // Fl_Tile* o
     window->end();

@@ -36,3 +36,22 @@ Node * new_node(const char * name, int x, int y)
 	}
 	return NULL;
 }
+
+int node_count()
+{
+	if (!groups || !names || !funcs) return 0;
+	return names->count();
+}
+
+const char * node_group(int idx)
+{
+	if (!groups || !names || !funcs) return NULL;
+	return groups->get(idx);
+}
+
+const char * node_name(int idx)
+{
+	if (!groups || !names || !funcs) return NULL;
+	return names->get(idx);
+}
+

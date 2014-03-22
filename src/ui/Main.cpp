@@ -1,8 +1,13 @@
+#include <stdio.h>
+
 #include <FL/Fl.H>
+#include <FL/Fl_Button.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl_Native_File_Chooser.H>
 
 #include "core/Graph.h"
+#include "core/NodeFactory.h"
+
 #include "pkgs/logic/BitInput.h"
 #include "pkgs/logic/BitOutput.h"
 #include "pkgs/logic/AndGate.h"
@@ -25,6 +30,12 @@ static void update_window_title()
 		snprintf(buff, sizeof(buff)-1, "%s", kWindowTitle);
 	}
 	ui.window->label(strdup(buff));
+}
+
+static void cb_add_node(Fl_Widget * w, void * d)
+{
+	const char * name = (const char *) d;
+	ui.workspace->add_node(name);
 }
 
 static void cb_win_open(Fl_Widget * w, void * d)
@@ -126,6 +137,22 @@ static void setup_window()
 	ui.mnu_file_exit->callback(cb_win_close);
 	ui.window->callback(cb_win_close);
 	ui.workspace->scrollbars(ui.scroll_h, ui.scroll_v);
+
+	ui.node_tree->showroot(0);
+	ui.node_tree->selectmode(FL_TREE_SELECT_SINGLE);
+	ui.node_tree->marginleft(0);
+	ui.node_tree->margintop(0);
+	ui.node_tree->begin();
+	for (int i = 0; i < node_count(); i++) {
+		char buff[256];
+		snprintf(buff, sizeof(buff)-1, "%s/%s", node_group(i), node_name(i));
+		Fl_Tree_Item * item = ui.node_tree->add(buff);
+		Fl_Button * btn = new Fl_Button(1, 1, 150, 1, node_name(i));
+		btn->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+		item->widget(btn);
+		btn->callback(cb_add_node, (void*)node_name(i));
+	}
+	ui.node_tree->end();
 }
 
 int main(int argc, const char * argv[])

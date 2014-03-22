@@ -11,6 +11,9 @@
 #include "Node.h"
 
 extern void register_node(const char * group, const char * name, Node* (*new_fn)(int x, int y));
+extern int node_count();
+extern const char * node_group(int idx);
+extern const char * node_name(int idx);
 extern Node * new_node(const char * name, int x, int y);
 
 #define REGISTER_NODE(grp,name,cls) \
