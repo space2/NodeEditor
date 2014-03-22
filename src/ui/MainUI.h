@@ -21,6 +21,10 @@ public:
   static Fl_Menu_Item *mnu_file_save;
   static Fl_Menu_Item *mnu_file_saveas;
   static Fl_Menu_Item *mnu_file_exit;
+  static Fl_Menu_Item *mnu_edit_cut;
+  static Fl_Menu_Item *mnu_edit_copy;
+  static Fl_Menu_Item *mnu_edit_paste;
+  static Fl_Menu_Item *mnu_edit_dup;
   Fl_Scrollbar *scroll_h;
   Fl_Scrollbar *scroll_v;
   Fl_Tree *node_tree;

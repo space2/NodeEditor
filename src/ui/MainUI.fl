@@ -39,6 +39,27 @@ class MainUI {open
             xywh {0 0 100 20} shortcut 0x400071
           }
         }
+        Submenu {} {
+          label {&Edit} open
+          xywh {0 0 100 20}
+        } {
+          MenuItem mnu_edit_cut {
+            label {C&ut}
+            xywh {0 0 100 20} shortcut 0x400078
+          }
+          MenuItem mnu_edit_copy {
+            label {&Copy}
+            xywh {0 0 100 20} shortcut 0x400063
+          }
+          MenuItem mnu_edit_paste {
+            label {&Paste}
+            xywh {0 0 100 20} shortcut 0x400076
+          }
+          MenuItem mnu_edit_dup {
+            label {&Duplicate} selected
+            xywh {0 0 100 20} shortcut 0x400064
+          }
+        }
       }
       Fl_Scrollbar scroll_h {
         xywh {0 585 600 15} type Horizontal
@@ -52,7 +73,7 @@ class MainUI {open
         Fl_Tree node_tree {
           xywh {615 20 185 300} color 49
         }
-        Fl_Table properties {open selected
+        Fl_Table properties {open
           xywh {615 320 185 280} align 5
         } {}
       }

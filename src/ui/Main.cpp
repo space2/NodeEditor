@@ -97,6 +97,26 @@ static void cb_win_close(Fl_Widget * w, void * d)
 	ui.window->hide();
 }
 
+static void cb_edit_cut(Fl_Widget * w, void * d)
+{
+	ui.workspace->cut();
+}
+
+static void cb_edit_copy(Fl_Widget * w, void * d)
+{
+	ui.workspace->copy();
+}
+
+static void cb_edit_paste(Fl_Widget * w, void * d)
+{
+	ui.workspace->paste();
+}
+
+static void cb_edit_dup(Fl_Widget * w, void * d)
+{
+	ui.workspace->duplicate();
+}
+
 static void setup_graph()
 {
 	Graph * graph = new Graph("Simple");
@@ -136,6 +156,12 @@ static void setup_window()
 	ui.mnu_file_saveas->callback(cb_win_save_as);
 	ui.mnu_file_exit->callback(cb_win_close);
 	ui.window->callback(cb_win_close);
+
+	ui.mnu_edit_cut->callback(cb_edit_cut);
+	ui.mnu_edit_copy->callback(cb_edit_copy);
+	ui.mnu_edit_paste->callback(cb_edit_paste);
+	ui.mnu_edit_dup->callback(cb_edit_dup);
+
 	ui.workspace->scrollbars(ui.scroll_h, ui.scroll_v);
 
 	ui.node_tree->showroot(0);

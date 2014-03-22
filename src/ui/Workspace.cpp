@@ -422,3 +422,43 @@ void Workspace::add_node(const char * name)
 	_nodes.add(nodeui);
 	redraw();
 }
+
+void Workspace::cut()
+{
+	// TODO
+}
+
+void Workspace::copy()
+{
+	// TODO
+}
+
+void Workspace::paste()
+{
+	// TODO
+}
+
+void Workspace::duplicate()
+{
+	if (!_sel_count) {
+		fl_alert("No nodes selected!");
+		return;
+	}
+	int cnt = _nodes.count();
+	for (int i = 0; i < cnt; i++) {
+		if (!_nodes[i]->selected()) continue;
+		Node * old = _nodes[i]->node();
+		Node * clone = new_node(old->name(), old->x() + 10, old->y() + 10);
+		if (!clone) continue; // Maybe we should log this?
+		pugi::xml_node tmp;
+		old->save_to(tmp);
+		clone->load_from(tmp);
+		_graph->add(clone);
+		NodeUI * nodeui = new NodeUI(clone);
+		_nodes.add(nodeui);
+
+		_nodes[i]->selected(0);
+		nodeui->selected(1);
+	}
+	redraw();
+}

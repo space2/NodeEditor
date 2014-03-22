@@ -28,6 +28,11 @@ public:
 	void scrollbars(Fl_Scrollbar * h, Fl_Scrollbar * v);
 
 	void add_node(const char * name);
+
+	void cut();
+	void copy();
+	void paste();
+	void duplicate();
 protected:
 	void draw();
 	int handle(int event);
