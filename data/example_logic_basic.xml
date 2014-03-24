@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<graph>
+	<node id="0" name="BitInput" x="8" y="125">
+		<val type="bit" value="0" />
+	</node>
+	<node id="1" name="BitInput" x="9" y="270">
+		<val type="bit" value="0" />
+	</node>
+	<node id="2" name="BitOutput" x="482" y="27" />
+	<node id="3" name="Not" x="242" y="24" />
+	<node id="4" name="BitOutput" x="469" y="98" />
+	<node id="5" name="And" x="244" y="98" />
+	<node id="6" name="Nand" x="241" y="178" />
+	<node id="7" name="Or" x="239" y="252" />
+	<node id="8" name="Nor" x="239" y="339" />
+	<node id="9" name="Xor" x="237" y="425" />
+	<node id="10" name="BitOutput" x="469" y="427" />
+	<node id="11" name="BitOutput" x="469" y="344" />
+	<node id="12" name="BitOutput" x="472" y="265" />
+	<node id="13" name="BitOutput" x="469" y="179" />
+	<connection id="0" from="0" out="0" to="3" in="0" />
+	<connection id="1" from="3" out="0" to="2" in="0" />
+	<connection id="2" from="0" out="0" to="5" in="0" />
+	<connection id="3" from="1" out="0" to="5" in="1" />
+	<connection id="4" from="5" out="0" to="4" in="0" />
+	<connection id="5" from="0" out="0" to="6" in="0" />
+	<connection id="6" from="0" out="0" to="7" in="0" />
+	<connection id="7" from="1" out="0" to="6" in="1" />
+	<connection id="8" from="1" out="0" to="7" in="1" />
+	<connection id="9" from="0" out="0" to="8" in="0" />
+	<connection id="10" from="1" out="0" to="8" in="1" />
+	<connection id="11" from="9" out="0" to="10" in="0" />
+	<connection id="12" from="8" out="0" to="11" in="0" />
+	<connection id="13" from="7" out="0" to="12" in="0" />
+	<connection id="14" from="6" out="0" to="13" in="0" />
+	<connection id="15" from="1" out="0" to="9" in="1" />
+	<connection id="16" from="0" out="0" to="9" in="0" />
+</graph>

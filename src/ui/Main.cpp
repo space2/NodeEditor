@@ -8,10 +8,6 @@
 #include "core/Graph.h"
 #include "core/NodeFactory.h"
 
-#include "pkgs/logic/BitInput.h"
-#include "pkgs/logic/BitOutput.h"
-#include "pkgs/logic/AndGate.h"
-
 #include "MainUI.h"
 
 static MainUI ui;
