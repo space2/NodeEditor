@@ -28,6 +28,9 @@ public:
 	int inside(int mx, int my);
 	int find_input(int x, int y);
 	int find_output(int x, int y);
+	int is_edit_area(int x, int y);
+
+	int edit();
 
 	void move(int dx, int dy);
 	void draw(int dx, int dy);

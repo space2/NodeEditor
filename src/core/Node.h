@@ -21,9 +21,16 @@ public:
 	const char * name() const { return _name; }
 
 	int input_count() const { return _inputs.count(); }
-	const Slot * input(int idx) const { return _inputs[idx]; }
+	Slot * input(int idx) { return _inputs[idx]; }
 	int output_count() const { return _outputs.count(); }
-	const Slot * output(int idx) const { return _outputs[idx]; }
+	Slot * output(int idx) { return _outputs[idx]; }
+
+	virtual const Slot * show_slot() const { return NULL; }
+	virtual Slot * edit_slot() { return NULL; }
+
+	virtual void pre_calc() { /* NOP */ }
+	virtual int calc() { return 0; /* NOP */ }
+	virtual void post_calc() { /* NOP */ }
 
 	int x() const { return _x; }
 	int y() const { return _y; }
@@ -38,18 +45,23 @@ public:
 	int find_input(int x, int y);
 	int find_output(int x, int y);
 
+	void get_client_rect(int & x, int & y, int & w, int & h);
+
 	void move(int dx, int dy);
 
 	virtual int save_to(pugi::xml_node & node);
 	virtual int load_from(pugi::xml_node & node);
+
 protected:
 	void add_output(Slot * slot) { _outputs.add(slot); }
 	void add_input(Slot * slot) { _inputs.add(slot); }
+
+	ArrayO<Slot*> _inputs;
+	ArrayO<Slot*> _outputs;
+
 private:
 	int _x, _y;
 	const char * _name;
-	ArrayO<Slot*> _inputs;
-	ArrayO<Slot*> _outputs;
 };
 
 #endif /* NODE_H_ */

@@ -7,6 +7,8 @@
 
 #include <FL/fl_draw.H>
 
+#include "core/Util.h"
+
 #include "NodeUI.h"
 
 NodeUI::NodeUI(Node * node)
@@ -56,7 +58,7 @@ void NodeUI::draw(int dx, int dy)
 	fl_font(FL_HELVETICA, 8);
 	for (int i = 0; i < input_count(); i++) {
 		int xx = x;
-		int yy = y + 20 + i * 10;
+		int yy = dy + _node->input_y(i);
 		fl_color(40);
 		fl_pie(xx-4, yy-4, 9, 9, -90, 90);
 		fl_color(46);
@@ -68,7 +70,7 @@ void NodeUI::draw(int dx, int dy)
 	}
 	for (int i = 0; i < output_count(); i++) {
 		int xx = x + w - 1;
-		int yy = y + 20 + i * 10;
+		int yy = dy + _node->output_y(i);
 		fl_color(40);
 		fl_pie(xx-4, yy-4, 9, 9, 90, 270);
 		fl_color(46);
@@ -79,6 +81,20 @@ void NodeUI::draw(int dx, int dy)
 		int tw = 0, th = 0;
 		fl_measure(output_name(i), tw, th, 0);
 		fl_draw(output_name(i), xx - 5 - tw, yy + 1);
+	}
+
+	// Draw value
+	const Slot * slot = _node->edit_slot();
+	if (!slot) slot = _node->show_slot();
+	if (slot) {
+		if (slot->type() == Slot::Bit) {
+			const char * v = Util::bit2string(slot->as_bit());
+			fl_color(FL_BLACK);
+			fl_font(FL_COURIER, 16);
+			fl_draw(v, x, y + 15, w, h - 15, FL_ALIGN_CENTER, NULL, 0);
+		} else {
+			// TODO: Render the other types
+		}
 	}
 }
 
@@ -98,6 +114,15 @@ int NodeUI::find_output(int x, int y)
 	return _node->find_output(x, y);
 }
 
+int NodeUI::is_edit_area(int x, int y)
+{
+	Slot * slot = _node->edit_slot();
+	if (!slot) return 0;
+	int xx, yy, ww, hh;
+	_node->get_client_rect(xx, yy, ww, hh);
+	return (x >= xx) && (y >= yy) && (x < xx + ww) && (y < yy + hh);
+}
+
 void NodeUI::update_color() {
 	if (_sel) {
 		_color = _high ? 167 : 166;
@@ -109,4 +134,15 @@ void NodeUI::update_color() {
 void NodeUI::move(int dx, int dy)
 {
 	_node->move(dx, dy);
+}
+
+int NodeUI::edit()
+{
+	Slot * slot = _node->edit_slot();
+	if (slot->type() == Slot::Bit) {
+		// Toggle bit
+		slot->set_bit(!slot->as_bit());
+		return 1;
+	}
+	return 0;
 }

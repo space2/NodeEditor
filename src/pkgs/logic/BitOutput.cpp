@@ -9,9 +9,9 @@
 #include "core/NodeFactory.h"
 
 BitOutput::BitOutput(int x, int y)
-	: Node(x, y, "BitOutput"), _val(0)
+	: Node(x, y, "BitOutput")
 {
-	add_input(new Slot(Slot::Bit, "in"));
+	add_input(new Slot("in"));
 }
 
 BitOutput::~BitOutput()

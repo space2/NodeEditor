@@ -98,6 +98,7 @@ void Workspace::graph(Graph * graph)
 	}
 
 	set_scrollbar_range();
+	_graph->calc();
 	redraw();
 }
 
@@ -112,7 +113,7 @@ void Workspace::draw()
 
 int Workspace::handle(int event)
 {
-	int ret = 0, dx = 0, dy = 0, in_idx, out_idx;
+	int ret = 0, dx = 0, dy = 0, in_idx, out_idx, edit_area;
 	int mx = s2gx(Fl::event_x());
 	int my = s2gy(Fl::event_y());
 	NodeUI * node = NULL;
@@ -128,8 +129,11 @@ int Workspace::handle(int event)
 		node = find_node_below(mx, my);
 		in_idx = node ? node->find_input(mx, my) : -1;
 		out_idx = node ? node->find_output(mx, my) : -1;
+		edit_area = node ? node->is_edit_area(mx, my) : 0;
 		highlight(node);
-		if (in_idx >= 0 || out_idx >= 0) {
+		if (edit_area) {
+			fl_cursor(FL_CURSOR_INSERT);
+		} else if (in_idx >= 0 || out_idx >= 0) {
 			fl_cursor(FL_CURSOR_HAND);
 		} else if (node) {
 			fl_cursor(FL_CURSOR_MOVE);
@@ -144,7 +148,11 @@ int Workspace::handle(int event)
 		node = find_node_below(_start_x, _start_y);
 		in_idx = node ? node->find_input(_start_x, _start_y) : -1;
 		out_idx = node ? node->find_output(_start_x, _start_y) : -1;
-		if (in_idx >= 0) {
+		edit_area = node ? node->is_edit_area(mx, my) : 0;
+		if (edit_area) {
+			_state = Edit;
+			_sel_conn_node = node;
+		} else if (in_idx >= 0) {
 			ConnectionUI * conn = find_connection_to(node, in_idx);
 			if (conn) {
 				start_connection_drag(conn->conn()->from(), conn->conn()->out_idx(), DragIn);
@@ -195,15 +203,22 @@ int Workspace::handle(int event)
 			if (node && in_idx >= 0) {
 				add_connection(_sel_conn_node, _sel_conn_idx, node, in_idx);
 			}
+			_graph->calc();
 		} else if (_state == DragOut) {
 			node = find_node_below(_start_x, _start_y);
 			int out_idx = node ? node->find_output(_start_x, _start_y) : -1;
 			if (node && out_idx >= 0) {
 				add_connection(node, out_idx, _sel_conn_node, _sel_conn_idx);
 			}
+			_graph->calc();
 		} else if (_state == Drag) {
 			set_scrollbar_range();
 			_graph->dirty(1);
+		} else if (_state == Edit) {
+			if (_sel_conn_node->edit()) {
+				_graph->calc();
+				redraw();
+			}
 		}
 		_state = Idle;
 		redraw();
@@ -378,7 +393,7 @@ ConnectionUI * Workspace::find_connection_from(const NodeUI * node, int out_idx)
 	return NULL;
 }
 
-void Workspace::start_connection_drag(const Node * node, int idx, State state)
+void Workspace::start_connection_drag(Node * node, int idx, State state)
 {
 	_sel_conn_node = find_node(node);
 	_sel_conn_idx = idx;
@@ -393,7 +408,7 @@ void Workspace::delete_connection(ConnectionUI * conn)
 	redraw();
 }
 
-void Workspace::add_connection(const NodeUI * from, int out_idx, const NodeUI * to, int in_idx)
+void Workspace::add_connection(NodeUI * from, int out_idx, NodeUI * to, int in_idx)
 {
 	// Need to remove old connection to the input
 	ConnectionUI * old = find_connection_to(to, in_idx);
@@ -409,7 +424,7 @@ void Workspace::add_connection(const NodeUI * from, int out_idx, const NodeUI * 
 	redraw();
 }
 
-const NodeUI * Workspace::find_node(const Node * node)
+NodeUI * Workspace::find_node(Node * node)
 {
 	for (int i = 0; i < _nodes.count(); i++) {
 		if (_nodes[i]->node() == node) {
@@ -431,6 +446,7 @@ void Workspace::add_node(const char * name)
 	_graph->add(node);
 	NodeUI * nodeui = new NodeUI(node);
 	_nodes.add(nodeui);
+	_graph->calc();
 	redraw();
 }
 
@@ -443,6 +459,7 @@ void Workspace::cut()
 		remove(_nodes[i]);
 	}
 	_sel_count = 0;
+	_graph->calc();
 	redraw();
 }
 
@@ -488,6 +505,7 @@ void Workspace::paste()
 		_sel_count++;
 		child = child.next_sibling();
 	}
+	_graph->calc();
 	redraw();
 }
 
@@ -513,6 +531,7 @@ void Workspace::duplicate()
 		_nodes[i]->selected(0);
 		nodeui->selected(1);
 	}
+	_graph->calc();
 	redraw();
 }
 

@@ -39,6 +39,7 @@ protected:
 private:
 	enum State {
 		Idle = 0,
+		Edit,
 		WaitForDrag,
 		Drag,
 		DragIn,
@@ -58,11 +59,11 @@ private:
 	void drag_selected(int dx, int dy);
 	ConnectionUI * find_connection_to(const NodeUI * node, int in_idx);
 	ConnectionUI * find_connection_from(const NodeUI * node, int out_idx);
-	void start_connection_drag(const Node * node, int idx, State state);
+	void start_connection_drag(Node * node, int idx, State state);
 	void unselect_all();
 	void delete_connection(ConnectionUI * conn);
-	void add_connection(const NodeUI * from, int out_idx, const NodeUI * to, int in_idx);
-	const NodeUI * find_node(const Node * node);
+	void add_connection(NodeUI * from, int out_idx, NodeUI * to, int in_idx);
+	NodeUI * find_node(Node * node);
 	void set_scrollbar_range();
 	void remove(NodeUI * nodeui);
 
@@ -79,7 +80,7 @@ private:
 	ArrayO<ConnectionUI*> _conns;
 	NodeUI * _high;
 	int _start_x, _start_y, _sel_count;
-	const NodeUI * _sel_conn_node;
+	NodeUI * _sel_conn_node;
 	int _sel_conn_idx;
 	State _state;
 	int _scroll_x, _scroll_y;

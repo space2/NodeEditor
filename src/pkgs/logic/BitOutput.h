@@ -14,8 +14,7 @@ class BitOutput: public Node {
 public:
 	BitOutput(int x, int y);
 	virtual ~BitOutput();
-private:
-	int _val;
+	virtual const Slot * show_slot() const { return _inputs[0]; }
 };
 
 #endif /* BITOUTPUT_H_ */

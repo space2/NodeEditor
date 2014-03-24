@@ -38,6 +38,8 @@ public:
 	const char * file_name() const { return _file_name; }
 
 	void calc_range(int & min_x, int & min_y, int & max_x, int & max_y);
+
+	void calc();
 private:
 	void clear();
 	void file_name(const char * fn);

@@ -15,13 +15,15 @@ public:
 	BitInput(int x, int y);
 	virtual ~BitInput();
 
-	int value() const { return _val; }
-	void value(int val) { _val = val; }
-
 	virtual int save_to(pugi::xml_node & node);
 	virtual int load_from(pugi::xml_node & node);
+
+	virtual const Slot * show_slot() const { return &_val; }
+	virtual Slot * edit_slot() { return &_val; }
+
+	virtual int calc();
 private:
-	int _val;
+	Slot _val;
 };
 
 #endif /* BITINPUT_H_ */

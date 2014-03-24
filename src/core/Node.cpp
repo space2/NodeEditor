@@ -90,3 +90,11 @@ int Node::load_from(pugi::xml_node & node)
 	// Placeholder for custom attributes
 	return 1;
 }
+
+void Node::get_client_rect(int & x, int & y, int & w, int & h)
+{
+	x = _x + kSlotAreaWidth;
+	y = _y + kNodeHeader;
+	w = this->w() - 2 * kSlotAreaWidth;
+	h = this->h() - kNodeHeader;
+}

@@ -16,6 +16,12 @@ public:
 	static inline int max(int a, int b) { return a > b ? a : b; }
 	static inline float min(float a, float b) { return a < b ? a : b; }
 	static inline float max(float a, float b) { return a > b ? a : b; }
+
+	static inline const char * bit2string(int bit) {
+		if (bit == 0) return "0";
+		if (bit == 1) return "1";
+		return "?";
+	}
 };
 
 #endif /* UTIL_H_ */

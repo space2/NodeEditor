@@ -154,3 +154,52 @@ void Graph::calc_range(int & min_x, int & min_y, int & max_x, int & max_y)
 	max_y += kRangeExtra;
 }
 
+void Graph::calc()
+{
+	for (int i = 0; i < _nodes.count(); i++) {
+		_nodes[i]->pre_calc();
+	}
+
+	// Send the current values through all the connections (in case the connections changed, but
+	// not the nodes
+	// Find all connections coming from this slot and transmit the new value
+	for (int c = 0; c < _conns.count(); c++) {
+		Connection * conn = _conns[c];
+		Slot * begin = conn->from()->output(conn->out_idx());
+		Slot * end = conn->to()->input(conn->in_idx());
+		end->set(begin);
+	}
+
+	// Simply loop until there is no more change in the graph
+	for (int tries = 0; tries < 1000; tries++) {
+		int changed = 0; // Check if anything changed in this iteration
+		for (int i = 0; i < _nodes.count(); i++) {
+			Node * node = _nodes[i];
+			if (node->calc()) {
+				// This node did something, let's find the changed output and transmit it
+				for (int oidx = 0; oidx < node->output_count(); oidx++) {
+					Slot * slot = node->output(oidx);
+					if (slot->changed()) {
+						// Find all connections coming from this slot and transmit the new value
+						for (int c = 0; c < _conns.count(); c++) {
+							Connection * conn = _conns[c];
+							if (conn->from() == node && conn->out_idx() == oidx) {
+								// Got a matching connection, transmit the value
+								Slot * end = conn->to()->input(conn->in_idx());
+								end->set(slot);
+								changed++;
+							}
+						}
+						slot->changed(0);
+					}
+				}
+			}
+		}
+		printf("iter#%d changed=%d\n", tries, changed);
+		if (!changed) break;
+	}
+
+	for (int i = 0; i < _nodes.count(); i++) {
+		_nodes[i]->post_calc();
+	}
+}
