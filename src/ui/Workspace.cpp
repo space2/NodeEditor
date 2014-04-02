@@ -30,7 +30,7 @@ static int check_drag_dist(int dx, int dy)
 
 Workspace::Workspace(int x, int y, int w, int h, const char * l)
 	: Fl_Widget(x, y, w, h, l), _graph(new Graph("Untitled")), _high(NULL),
-	  _start_x(0), _start_y(0), _sel_count(0),
+	  _start_x(0), _start_y(0), _end_x(0), _end_y(0), _sel_count(0),
 	  _sel_conn_node(NULL), _sel_conn_idx(-1),
 	  _state(Idle), _scroll_x(0), _scroll_y(0),
 	  _scr_h(NULL), _scr_v(NULL)
@@ -108,7 +108,25 @@ void Workspace::draw()
 	draw_background();
 	draw_nodes();
 	draw_connections();
+	draw_selection();
 	fl_pop_clip();
+}
+
+void Workspace::draw_selection()
+{
+	if (_state != Select) return;
+	int x = g2sx(Util::min(_start_x, _end_x));
+	int y = g2sy(Util::min(_start_y, _end_y));
+	int w = Util::abs(_end_x - _start_x);
+	int h = Util::abs(_end_y - _start_y);
+	fl_line_style(FL_SOLID, 1, NULL);
+	fl_color(FL_BLACK);
+	fl_rect(x, y, w, h);
+	fl_line_style(FL_DASH, 1, NULL);
+	fl_color(FL_RED);
+	fl_rect(x, y, w, h);
+	fl_line_style(FL_SOLID, 1, NULL);
+	fl_color(FL_BLACK);
 }
 
 int Workspace::handle(int event)
@@ -174,7 +192,9 @@ int Workspace::handle(int event)
 				_state = WaitForDrag;
 			}
 		} else {
-			_state = WaitForPan;
+			_state = Select;
+			_end_x = _start_x;
+			_end_y = _start_y;
 		}
 		return 1;
 	case FL_DRAG:
@@ -191,12 +211,18 @@ int Workspace::handle(int event)
 			_start_x += dx;
 			_start_y += dy;
 			redraw();
+		} else if (_state == Select) {
+			_end_x = mx;
+			_end_y = my;
+			redraw();
 		}
 		return 1;
 	case FL_RELEASE:
-		if (_state == WaitForPan) {
-			// Clicked on the workspace, deselect everything
-			unselect_all();
+		if (_state == Select) {
+			SelectOp op = SelectSet;
+			if (Fl::event_shift()) op = SelectAdd;
+			if (Fl::event_alt()) op = SelectRemove;
+			select_nodes_in_rect(_start_x, _start_y, _end_x, _end_y, op);
 		} else if (_state == DragIn) {
 			node = find_node_below(_start_x, _start_y);
 			int in_idx = node ? node->find_input(_start_x, _start_y) : -1;
@@ -358,6 +384,35 @@ void Workspace::select_node(NodeUI * node, int toggle)
 		_sel_count = 1;
 		redraw();
 	}
+}
+
+void Workspace::select_nodes_in_rect(int x0, int y0, int x1, int y1, SelectOp op)
+{
+	if (x0 > x1) Util::swap(x0, x1);
+	if (y0 > y1) Util::swap(y0, y1);
+	if (op == SelectSet) {
+		unselect_all();
+	}
+	for (int i = 0; i < _nodes.count(); i++) {
+		NodeUI * node = _nodes[i];
+		Node * n = node->node();
+		if (n->x() > x1) continue;
+		if (n->y() > y1) continue;
+		if (n->x() + n->w() < x0) continue;
+		if (n->y() + n->h() < y0) continue;
+		if (op == SelectAdd || op == SelectSet) {
+			if (!node->selected()) {
+				node->selected(1);
+				_sel_count++;
+			}
+		} else {
+			if (node->selected()) {
+				node->selected(0);
+				_sel_count--;
+			}
+		}
+	}
+	redraw();
 }
 
 void Workspace::unselect_all()

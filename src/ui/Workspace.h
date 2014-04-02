@@ -44,18 +44,25 @@ private:
 		Drag,
 		DragIn,
 		DragOut,
-		WaitForPan,
-		Pan,
+		Select,
+	};
+
+	enum SelectOp {
+		SelectSet,
+		SelectAdd,
+		SelectRemove,
 	};
 
 	void draw_background();
 	void draw_connections();
 	void draw_nodes();
 	void draw_connection(int x0, int y0, int x1, int y1, int col0, int col1);
+	void draw_selection();
 	void clear();
 	NodeUI * find_node_below(int x, int y);
 	void highlight(NodeUI * node);
 	void select_node(NodeUI * node, int toggle);
+	void select_nodes_in_rect(int x0, int y0, int x1, int y1, SelectOp op);
 	void drag_selected(int dx, int dy);
 	ConnectionUI * find_connection_to(const NodeUI * node, int in_idx);
 	ConnectionUI * find_connection_from(const NodeUI * node, int out_idx);
@@ -79,7 +86,7 @@ private:
 	ArrayO<NodeUI*> _nodes;
 	ArrayO<ConnectionUI*> _conns;
 	NodeUI * _high;
-	int _start_x, _start_y, _sel_count;
+	int _start_x, _start_y, _end_x, _end_y, _sel_count;
 	NodeUI * _sel_conn_node;
 	int _sel_conn_idx;
 	State _state;

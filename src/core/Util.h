@@ -16,6 +16,8 @@ public:
 	static inline int max(int a, int b) { return a > b ? a : b; }
 	static inline float min(float a, float b) { return a < b ? a : b; }
 	static inline float max(float a, float b) { return a > b ? a : b; }
+	static inline void swap(int & a, int & b) { int tmp = a; a = b; b = tmp; }
+	static inline void swap(float & a, float & b) { float tmp = a; a = b; b = tmp; }
 
 	static inline const char * bit2string(int bit) {
 		if (bit == 0) return "0";
