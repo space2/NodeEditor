@@ -6,22 +6,22 @@
 	<node id="1" name="BitInput" x="16" y="266">
 		<val type="bit" value="1" />
 	</node>
-	<node id="2" name="And" x="263" y="257" />
-	<node id="3" name="BitOutput" x="769" y="137" />
-	<node id="4" name="BitOutput" x="771" y="92" />
-	<node id="5" name="Xor" x="265" y="307" />
+	<node id="2" name="And" x="256" y="244" />
+	<node id="3" name="BitOutput" x="681" y="154" />
+	<node id="4" name="BitOutput" x="682" y="115" />
+	<node id="5" name="Xor" x="263" y="301" />
 	<node id="6" name="BitInput" x="14" y="210">
 		<val type="bit" value="1" />
 	</node>
 	<node id="7" name="BitInput" x="15" y="18">
 		<val type="bit" value="1" />
 	</node>
-	<node id="8" name="BitOutput" x="769" y="185" />
-	<node id="9" name="And" x="269" y="43" />
-	<node id="10" name="Xor" x="271" y="93" />
-	<node id="11" name="And" x="466" y="100" />
-	<node id="12" name="Xor" x="468" y="150" />
-	<node id="13" name="Or" x="592" y="53" />
+	<node id="8" name="BitOutput" x="680" y="193" />
+	<node id="9" name="And" x="258" y="37" />
+	<node id="10" name="Xor" x="250" y="88" />
+	<node id="11" name="And" x="464" y="132" />
+	<node id="12" name="Xor" x="464" y="185" />
+	<node id="13" name="Or" x="533" y="48" />
 	<connection id="0" from="1" out="0" to="2" in="1" />
 	<connection id="1" from="0" out="0" to="2" in="0" />
 	<connection id="2" from="1" out="0" to="5" in="1" />
