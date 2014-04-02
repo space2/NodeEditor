@@ -5,8 +5,7 @@
  *      Author: Pal Szasz <pal.szasz@gmail.com>
  */
 
-#ifndef WORKSPACE_H_
-#define WORKSPACE_H_
+#pragma once
 
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Scrollbar.H>
@@ -97,4 +96,3 @@ private:
 	pugi::xml_document _clipboard;
 };
 
-#endif /* WORKSPACE_H_ */

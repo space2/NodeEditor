@@ -5,8 +5,7 @@
  *      Author: Pal Szasz <pal.szasz@gmail.com>
  */
 
-#ifndef SIMPLEGATES_H_
-#define SIMPLEGATES_H_
+#pragma once
 
 #include "core/Node.h"
 
@@ -66,4 +65,3 @@ protected:
 	virtual int calc(int in0, int in1);
 };
 
-#endif /* ANDGATE_H_ */

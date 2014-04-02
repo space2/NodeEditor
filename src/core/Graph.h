@@ -5,8 +5,7 @@
  *      Author: Pal Szasz <pal.szasz@gmail.com>
  */
 
-#ifndef GRAPH_H_
-#define GRAPH_H_
+#pragma once
 
 #include "Node.h"
 #include "Connection.h"
@@ -51,4 +50,3 @@ private:
 	int _dirty;
 };
 
-#endif /* GRAPH_H_ */

@@ -5,8 +5,7 @@
  *      Author: Pal Szasz <pal.szasz@gmail.com>
  */
 
-#ifndef CONNECTION_H_
-#define CONNECTION_H_
+#pragma once
 
 #include "Node.h"
 
@@ -30,4 +29,3 @@ private:
 	int _out_idx, _in_idx;
 };
 
-#endif /* CONNECTION_H_ */

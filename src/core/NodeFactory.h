@@ -5,8 +5,7 @@
  *      Author: Pal Szasz <pal.szasz@gmail.com>
  */
 
-#ifndef NODEFACTORY_H_
-#define NODEFACTORY_H_
+#pragma once
 
 #include "Node.h"
 
@@ -25,4 +24,3 @@ void __init__##grp##__##name() { \
 	register_node(#grp, #name, __new__##grp##__##name); \
 }
 
-#endif /* NODEFACTORY_H_ */

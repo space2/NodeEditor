@@ -5,8 +5,7 @@
  *      Author: Pal Szasz <pal.szasz@gmail.com>
  */
 
-#ifndef NODEUI_H_
-#define NODEUI_H_
+#pragma once
 
 #include "core/Node.h"
 
@@ -46,4 +45,3 @@ private:
 	int _sel, _high;
 };
 
-#endif /* NODEUI_H_ */

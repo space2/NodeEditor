@@ -5,8 +5,7 @@
  *      Author: Pal Szasz <pal.szasz@gmail.com>
  */
 
-#ifndef SLOT_H_
-#define SLOT_H_
+#pragma once
 
 #include <pugixml/pugixml.hpp>
 
@@ -56,4 +55,3 @@ private:
 	float _float_val;
 };
 
-#endif /* SLOT_H_ */

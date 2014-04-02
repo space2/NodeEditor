@@ -5,8 +5,7 @@
  *      Author: Pal Szasz <pal.szasz@gmail.com>
  */
 
-#ifndef BITINPUT_H_
-#define BITINPUT_H_
+#pragma once
 
 #include "core/Node.h"
 
@@ -26,4 +25,3 @@ private:
 	Slot _val;
 };
 
-#endif /* BITINPUT_H_ */

@@ -5,8 +5,7 @@
  *      Author: Pal Szasz <pal.szasz@gmail.com>
  */
 
-#ifndef UTIL_H_
-#define UTIL_H_
+#pragma once
 
 class Util {
 public:
@@ -26,4 +25,3 @@ public:
 	}
 };
 
-#endif /* UTIL_H_ */

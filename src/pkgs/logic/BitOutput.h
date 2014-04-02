@@ -5,8 +5,7 @@
  *      Author: Pal Szasz <pal.szasz@gmail.com>
  */
 
-#ifndef BITOUTPUT_H_
-#define BITOUTPUT_H_
+#pragma once
 
 #include "core/Node.h"
 
@@ -17,4 +16,3 @@ public:
 	virtual const Slot * show_slot() const { return _inputs[0]; }
 };
 
-#endif /* BITOUTPUT_H_ */

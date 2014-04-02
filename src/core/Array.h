@@ -1,5 +1,4 @@
-#ifndef ARRAY_H_
-#define ARRAY_H_
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -145,4 +144,3 @@ public:
 	virtual ~ArrayP() {}
 };
 
-#endif /* ARRAY_H_ */

@@ -5,8 +5,7 @@
  *      Author: Pal Szasz <pal.szasz@gmail.com>
  */
 
-#ifndef CONNECTIONUI_H_
-#define CONNECTIONUI_H_
+#pragma once
 
 #include "core/Connection.h"
 
@@ -21,5 +20,3 @@ public:
 private:
 	Connection * _conn;
 };
-
-#endif /* CONNECTIONUI_H_ */

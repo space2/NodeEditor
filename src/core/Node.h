@@ -5,8 +5,7 @@
  *      Author: Pal Szasz <pal.szasz@gmail.com>
  */
 
-#ifndef NODE_H_
-#define NODE_H_
+#pragma once
 
 #include "pugixml/pugixml.hpp"
 
@@ -64,4 +63,3 @@ private:
 	const char * _name;
 };
 
-#endif /* NODE_H_ */
