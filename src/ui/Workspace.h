@@ -33,6 +33,8 @@ public:
 	void copy();
 	void paste();
 	void duplicate();
+	void select_all();
+	void unselect_all();
 protected:
 	void draw();
 	int handle(int event);
@@ -67,7 +69,6 @@ private:
 	ConnectionUI * find_connection_to(const NodeUI * node, int in_idx);
 	ConnectionUI * find_connection_from(const NodeUI * node, int out_idx);
 	void start_connection_drag(Node * node, int idx, State state);
-	void unselect_all();
 	void delete_connection(ConnectionUI * conn);
 	void add_connection(NodeUI * from, int out_idx, NodeUI * to, int in_idx);
 	NodeUI * find_node(Node * node);

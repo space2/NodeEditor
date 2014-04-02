@@ -415,6 +415,15 @@ void Workspace::select_nodes_in_rect(int x0, int y0, int x1, int y1, SelectOp op
 	redraw();
 }
 
+void Workspace::select_all()
+{
+	for (int i = 0; i < _nodes.count(); i++) {
+		_nodes[i]->selected(1);
+	}
+	_sel_count = _nodes.count();
+	redraw();
+}
+
 void Workspace::unselect_all()
 {
 	for (int i = 0; i < _nodes.count(); i++) {

@@ -21,6 +21,8 @@ public:
   static Fl_Menu_Item *mnu_file_save;
   static Fl_Menu_Item *mnu_file_saveas;
   static Fl_Menu_Item *mnu_file_exit;
+  static Fl_Menu_Item *mnu_edit_select_all;
+  static Fl_Menu_Item *mnu_edit_select_none;
   static Fl_Menu_Item *mnu_edit_cut;
   static Fl_Menu_Item *mnu_edit_copy;
   static Fl_Menu_Item *mnu_edit_paste;

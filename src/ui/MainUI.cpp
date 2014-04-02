@@ -10,6 +10,8 @@ Fl_Menu_Item MainUI::menu_[] = {
  {"E&xit", 0x400071,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0},
  {"&Edit", 0,  0, 0, 64, FL_NORMAL_LABEL, 0, 14, 0},
+ {"Select &all", 0x400061,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {"Select &none", 0x410061,  0, 0, 128, FL_NORMAL_LABEL, 0, 14, 0},
  {"C&ut", 0x400078,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {"&Copy", 0x400063,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {"&Paste", 0x400076,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
@@ -21,10 +23,12 @@ Fl_Menu_Item* MainUI::mnu_file_open = MainUI::menu_ + 1;
 Fl_Menu_Item* MainUI::mnu_file_save = MainUI::menu_ + 2;
 Fl_Menu_Item* MainUI::mnu_file_saveas = MainUI::menu_ + 3;
 Fl_Menu_Item* MainUI::mnu_file_exit = MainUI::menu_ + 4;
-Fl_Menu_Item* MainUI::mnu_edit_cut = MainUI::menu_ + 7;
-Fl_Menu_Item* MainUI::mnu_edit_copy = MainUI::menu_ + 8;
-Fl_Menu_Item* MainUI::mnu_edit_paste = MainUI::menu_ + 9;
-Fl_Menu_Item* MainUI::mnu_edit_dup = MainUI::menu_ + 10;
+Fl_Menu_Item* MainUI::mnu_edit_select_all = MainUI::menu_ + 7;
+Fl_Menu_Item* MainUI::mnu_edit_select_none = MainUI::menu_ + 8;
+Fl_Menu_Item* MainUI::mnu_edit_cut = MainUI::menu_ + 9;
+Fl_Menu_Item* MainUI::mnu_edit_copy = MainUI::menu_ + 10;
+Fl_Menu_Item* MainUI::mnu_edit_paste = MainUI::menu_ + 11;
+Fl_Menu_Item* MainUI::mnu_edit_dup = MainUI::menu_ + 12;
 
 Fl_Double_Window* MainUI::make_window() {
   { window = new Fl_Double_Window(800, 600, "NodeEditor");

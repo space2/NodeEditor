@@ -93,6 +93,16 @@ static void cb_win_close(Fl_Widget * w, void * d)
 	ui.window->hide();
 }
 
+static void cb_edit_select_all(Fl_Widget * w, void * d)
+{
+	ui.workspace->select_all();
+}
+
+static void cb_edit_select_none(Fl_Widget * w, void * d)
+{
+	ui.workspace->unselect_all();
+}
+
 static void cb_edit_cut(Fl_Widget * w, void * d)
 {
 	ui.workspace->cut();
@@ -153,6 +163,8 @@ static void setup_window()
 	ui.mnu_file_exit->callback(cb_win_close);
 	ui.window->callback(cb_win_close);
 
+	ui.mnu_edit_select_all->callback(cb_edit_select_all);
+	ui.mnu_edit_select_none->callback(cb_edit_select_none);
 	ui.mnu_edit_cut->callback(cb_edit_cut);
 	ui.mnu_edit_copy->callback(cb_edit_copy);
 	ui.mnu_edit_paste->callback(cb_edit_paste);
