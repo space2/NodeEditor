@@ -3,6 +3,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
 #include <FL/fl_ask.H>
+#include <FL/Fl_Input.H>
 #include <FL/Fl_Native_File_Chooser.H>
 
 #include "core/Graph.h"
@@ -11,10 +12,47 @@
 #include "MainUI.h"
 #include "NodeLabel.h"
 
+static const char * kWindowTitle = "NodeEditor";
+static const int kPropertyLabelWidth = 100;
+static const int kPropertyValueWidth = 100;
+static const int kPropertyHeight = 25;
+
 static MainUI ui;
 static Fl_Native_File_Chooser file_chooser;
+static NodeUI * selected_node = NULL;
 
-static const char * kWindowTitle = "NodeEditor";
+
+static void show_properties(NodeUI * node)
+{
+	selected_node = node;
+	ui.properties->clear();
+	ui.properties->begin();
+	int x = ui.properties->x() + 2; // Gap due to box
+	int y = ui.properties->y() + 2; // Gap due to box
+	Node * n = node->node();
+	// Add input names
+	for (int i = 0; i < n->input_count(); i++) {
+		char label[32];
+		sprintf(label, "Input#%d", i+1);
+		Slot * slot = n->input(i);
+		Fl_Input * value_w = new Fl_Input(x + kPropertyLabelWidth, y, kPropertyValueWidth, kPropertyHeight);
+		value_w->copy_label(label);
+		value_w->value(slot->name());
+		y += kPropertyHeight;
+	}
+	// Add output names
+	for (int i = 0; i < n->output_count(); i++) {
+		char label[32];
+		sprintf(label, "Output#%d", i+1);
+		Slot * slot = n->output(i);
+		Fl_Input * value_w = new Fl_Input(x + kPropertyLabelWidth, y, kPropertyValueWidth, kPropertyHeight);
+		value_w->copy_label(label);
+		value_w->value(slot->name());
+		y += kPropertyHeight;
+	}
+	ui.properties->end();
+	ui.properties->redraw();
+}
 
 static void update_window_title()
 {
@@ -118,6 +156,13 @@ static void cb_edit_dup(Fl_Widget * w, void * d)
 	ui.workspace->duplicate();
 }
 
+static void cb_workspace(Workspace::CallbackEvent event, NodeUI * param)
+{
+	if (event == Workspace::NodeSelected) {
+		show_properties(param);
+	}
+}
+
 static void setup_graph()
 {
 	Graph * graph = new Graph("Simple");
@@ -166,6 +211,7 @@ static void setup_window()
 	ui.mnu_edit_dup->callback(cb_edit_dup);
 
 	ui.workspace->scrollbars(ui.scroll_h, ui.scroll_v);
+	ui.workspace->listener(cb_workspace);
 
 	ui.node_tree->showroot(0);
 	ui.node_tree->selectmode(FL_TREE_SELECT_SINGLE);

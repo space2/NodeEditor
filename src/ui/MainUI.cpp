@@ -33,7 +33,7 @@ Fl_Menu_Item* MainUI::mnu_edit_dup = MainUI::menu_ + 12;
 Fl_Double_Window* MainUI::make_window() {
   { window = new Fl_Double_Window(800, 600, "NodeEditor");
     window->user_data((void*)(this));
-    { workspace = new Workspace(0, 20, 600, 565);
+    { workspace = new Workspace(0, 20, 565, 565);
       workspace->box(FL_THIN_DOWN_BOX);
       workspace->color(FL_BACKGROUND_COLOR);
       workspace->selection_color(FL_BACKGROUND_COLOR);
@@ -51,17 +51,17 @@ Fl_Double_Window* MainUI::make_window() {
     { scroll_h = new Fl_Scrollbar(0, 585, 600, 15);
       scroll_h->type(1);
     } // Fl_Scrollbar* scroll_h
-    { scroll_v = new Fl_Scrollbar(600, 20, 15, 565);
+    { scroll_v = new Fl_Scrollbar(565, 20, 15, 565);
     } // Fl_Scrollbar* scroll_v
-    { Fl_Tile* o = new Fl_Tile(615, 20, 185, 580);
+    { Fl_Tile* o = new Fl_Tile(580, 20, 220, 580);
       o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-      { node_tree = new Fl_Tree(615, 20, 185, 300);
-        node_tree->color(FL_BACKGROUND_COLOR);
+      { node_tree = new Fl_Tree(580, 20, 220, 300);
       } // Fl_Tree* node_tree
-      { properties = new Fl_Table(615, 320, 185, 280);
-        properties->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+      { properties = new Fl_Scroll(580, 320, 220, 280);
+        properties->box(FL_DOWN_BOX);
+        properties->color(FL_BACKGROUND2_COLOR);
         properties->end();
-      } // Fl_Table* properties
+      } // Fl_Scroll* properties
       o->end();
     } // Fl_Tile* o
     window->end();

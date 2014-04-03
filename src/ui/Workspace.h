@@ -18,6 +18,10 @@
 
 class Workspace : public Fl_Widget {
 public:
+	enum CallbackEvent {
+		NodeSelected,
+	};
+
 	Workspace(int x, int y, int w, int h, const char * l = 0);
 	virtual ~Workspace();
 
@@ -34,6 +38,8 @@ public:
 	void duplicate();
 	void select_all();
 	void unselect_all();
+
+	void listener(void (*cb)(CallbackEvent event, NodeUI * param)) { _cb = cb; }
 protected:
 	void draw();
 	int handle(int event);
@@ -93,6 +99,7 @@ private:
 	int _scroll_x, _scroll_y;
 	Fl_Scrollbar * _scr_h;
 	Fl_Scrollbar * _scr_v;
+	void (*_cb)(CallbackEvent event, NodeUI * param);
 	pugi::xml_document _clipboard;
 };
 

@@ -43,7 +43,8 @@ Workspace::Workspace(int x, int y, int w, int h, const char * l)
 	  _start_x(0), _start_y(0), _end_x(0), _end_y(0), _sel_count(0),
 	  _sel_conn_node(NULL), _sel_conn_idx(-1),
 	  _state(Idle), _scroll_x(0), _scroll_y(0),
-	  _scr_h(NULL), _scr_v(NULL)
+	  _scr_h(NULL), _scr_v(NULL),
+	  _cb(NULL)
 {
 }
 
@@ -108,6 +109,8 @@ void Workspace::graph(Graph * graph)
 	}
 
 	set_scrollbar_range();
+	_sel_count = 0;
+	if (_cb) _cb(NodeSelected, NULL);
 	_graph->calc();
 	redraw();
 }
@@ -393,6 +396,7 @@ void Workspace::select_node(NodeUI * node, int toggle)
 	if (toggle) {
 		node->selected(!node->selected());
 		_sel_count += node->selected() ? 1 : -1;
+		if (_cb) _cb(NodeSelected, NULL);
 		redraw();
 	} else {
 		if (node->selected()) return; // NOP
@@ -401,6 +405,7 @@ void Workspace::select_node(NodeUI * node, int toggle)
 		}
 		node->selected(1);
 		_sel_count = 1;
+		if (_cb) _cb(NodeSelected, node);
 		redraw();
 	}
 }
@@ -431,6 +436,7 @@ void Workspace::select_nodes_in_rect(int x0, int y0, int x1, int y1, SelectOp op
 			}
 		}
 	}
+	if (_cb) _cb(NodeSelected, NULL);
 	redraw();
 }
 
@@ -440,6 +446,7 @@ void Workspace::select_all()
 		_nodes[i]->selected(1);
 	}
 	_sel_count = _nodes.count();
+	if (_cb) _cb(NodeSelected, NULL);
 	redraw();
 }
 
@@ -449,6 +456,7 @@ void Workspace::unselect_all()
 		_nodes[i]->selected(0);
 	}
 	_sel_count = 0;
+	if (_cb) _cb(NodeSelected, NULL);
 	redraw();
 }
 
@@ -541,6 +549,7 @@ void Workspace::cut()
 	}
 	_sel_count = 0;
 	_graph->calc();
+	if (_cb) _cb(NodeSelected, NULL);
 	redraw();
 }
 
@@ -587,6 +596,7 @@ void Workspace::paste()
 		child = child.next_sibling();
 	}
 	_graph->calc();
+	if (_cb) _cb(NodeSelected, NULL);
 	redraw();
 }
 

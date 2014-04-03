@@ -9,7 +9,7 @@
 #include <FL/Fl_Scrollbar.H>
 #include <FL/Fl_Tile.H>
 #include <FL/Fl_Tree.H>
-#include <FL/Fl_Table.H>
+#include <FL/Fl_Scroll.H>
 
 class MainUI {
 public:
@@ -30,6 +30,6 @@ public:
   Fl_Scrollbar *scroll_h;
   Fl_Scrollbar *scroll_v;
   Fl_Tree *node_tree;
-  Fl_Table *properties;
+  Fl_Scroll *properties;
 };
 #endif

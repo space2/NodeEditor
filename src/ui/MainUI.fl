@@ -11,7 +11,7 @@ class MainUI {open
       xywh {334 181 800 600} type Double resizable visible
     } {
       Fl_Box workspace {selected
-        xywh {0 20 600 565} box THIN_DOWN_BOX resizable
+        xywh {0 20 565 565} box THIN_DOWN_BOX resizable
         code0 {\#include "Workspace.h"}
         class Workspace
       }
@@ -73,16 +73,16 @@ class MainUI {open
         xywh {0 585 600 15} type Horizontal
       }
       Fl_Scrollbar scroll_v {
-        xywh {600 20 15 565}
+        xywh {565 20 15 565}
       }
       Fl_Tile {} {open
-        xywh {615 20 185 580} align 5
+        xywh {580 20 220 580} align 5
       } {
         Fl_Tree node_tree {
-          xywh {615 20 185 300} color 49
+          xywh {580 20 220 300}
         }
-        Fl_Table properties {open
-          xywh {615 320 185 280} align 5
+        Fl_Scroll properties {open
+          xywh {580 320 220 280} box DOWN_BOX color 7
         } {}
       }
     }
