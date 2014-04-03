@@ -26,7 +26,7 @@ public:
 
 	void scrollbars(Fl_Scrollbar * h, Fl_Scrollbar * v);
 
-	void add_node(const char * name);
+	void add_node(const char * name, int x, int y);
 
 	void cut();
 	void copy();

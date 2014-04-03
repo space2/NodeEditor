@@ -9,6 +9,7 @@
 #include "core/NodeFactory.h"
 
 #include "MainUI.h"
+#include "NodeLabel.h"
 
 static MainUI ui;
 static Fl_Native_File_Chooser file_chooser;
@@ -26,12 +27,6 @@ static void update_window_title()
 		snprintf(buff, sizeof(buff)-1, "%s", kWindowTitle);
 	}
 	ui.window->label(strdup(buff));
-}
-
-static void cb_add_node(Fl_Widget * w, void * d)
-{
-	const char * name = (const char *) d;
-	ui.workspace->add_node(name);
 }
 
 static void cb_win_open(Fl_Widget * w, void * d)
@@ -181,10 +176,8 @@ static void setup_window()
 		char buff[256];
 		snprintf(buff, sizeof(buff)-1, "%s/%s", node_group(i), node_name(i));
 		Fl_Tree_Item * item = ui.node_tree->add(buff);
-		Fl_Button * btn = new Fl_Button(1, 1, 150, 1, node_name(i));
-		btn->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-		item->widget(btn);
-		btn->callback(cb_add_node, (void*)node_name(i));
+		NodeLabel * label = new NodeLabel(1, 1, 150, 1, node_name(i));
+		item->widget(label);
 	}
 	ui.node_tree->end();
 }

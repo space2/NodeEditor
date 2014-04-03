@@ -14,6 +14,7 @@
 
 #include "Workspace.h"
 #include "NodeUI.h"
+#include "DnD.h"
 
 static const int kGridSize = 10;
 static const int kGridMajor = 10;
@@ -25,6 +26,15 @@ static int check_drag_dist(int dx, int dy)
 {
 	if (Util::abs(dx) > kDragTreshold) return 1;
 	if (Util::abs(dy) > kDragTreshold) return 1;
+	return 0;
+}
+
+static int check_dnd_add()
+{
+	const char * clip = Fl::event_text();
+	if (0 == strncmp(clip, kDndPrefixAdd, strlen(kDndPrefixAdd))) {
+		return 1;
+	}
 	return 0;
 }
 
@@ -249,6 +259,15 @@ int Workspace::handle(int event)
 		_state = Idle;
 		redraw();
 		return 1;
+	case FL_DND_ENTER:
+	case FL_DND_DRAG:
+	case FL_DND_RELEASE:
+		return 1;
+	case FL_PASTE:
+		if (check_dnd_add()) {
+			add_node(Fl::event_text() + strlen(kDndPrefixAdd), mx, my);
+		}
+		break;
 	}
 	if (Fl_Widget::handle(event)) ret = 1;
 	return ret;
@@ -498,10 +517,8 @@ NodeUI * Workspace::find_node(Node * node)
 	return NULL;
 }
 
-void Workspace::add_node(const char * name)
+void Workspace::add_node(const char * name, int x, int y)
 {
-	int x = _scroll_x + w() / 2;
-	int y = _scroll_y + h() / 2;
 	Node * node = new_node(name, x, y);
 	if (!node) {
 		fl_alert("Internal error: cannot create node!");
