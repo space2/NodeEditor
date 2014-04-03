@@ -81,13 +81,33 @@ int Node::find_output(int x, int y)
 
 int Node::save_to(pugi::xml_node & node)
 {
-	// Placeholder for custom attributes
+	// Save input/output names, since they might have changes
+	char buff[32];
+	for (int i = 0; i < input_count(); i++) {
+		sprintf(buff, "input_%d", i);
+		node.append_attribute(buff).set_value(input(i)->name());
+	}
+	for (int i = 0; i < output_count(); i++) {
+		sprintf(buff, "output_%d", i);
+		node.append_attribute(buff).set_value(output(i)->name());
+	}
 	return 1;
 }
 
 int Node::load_from(pugi::xml_node & node)
 {
-	// Placeholder for custom attributes
+	// Load input/output names, since they might have changes
+	char buff[32];
+	for (int i = 0; i < input_count(); i++) {
+		sprintf(buff, "input_%d", i);
+		pugi::xml_attribute new_name = node.attribute(buff);
+		if (!new_name.empty()) input(i)->name(new_name.as_string());
+	}
+	for (int i = 0; i < output_count(); i++) {
+		sprintf(buff, "output_%d", i);
+		pugi::xml_attribute new_name = node.attribute(buff);
+		if (!new_name.empty()) output(i)->name(new_name.as_string());
+	}
 	return 1;
 }
 

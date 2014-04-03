@@ -5,15 +5,25 @@
  *      Author: Pal Szasz <pal.szasz@gmail.com>
  */
 
+#include <string.h>
+#include <stdlib.h>
+
 #include "Slot.h"
 
 Slot::Slot(const char * name)
-	: _type(Undefined), _name(name), _changed(0), _int_val(0), _float_val(0)
+	: _type(Undefined), _name(strdup(name)), _changed(0), _int_val(0), _float_val(0)
 {
 }
 
 Slot::~Slot()
 {
+	free(_name);
+}
+
+void Slot::name(const char * name)
+{
+	free(_name);
+	_name = strdup(name);
 }
 
 int Slot::equals(const Slot * other)

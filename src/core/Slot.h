@@ -30,6 +30,7 @@ public:
 
 	const Type type() const { return _type; }
 	const char * name() const { return _name; }
+	void name(const char * name);
 
 	int as_bit() const { return _int_val; }
 	int as_int() const { return _int_val; }
@@ -49,7 +50,7 @@ public:
 
 private:
 	Type _type;
-	const char * _name;
+	char * _name;
 	int _changed;
 	int _int_val;
 	float _float_val;

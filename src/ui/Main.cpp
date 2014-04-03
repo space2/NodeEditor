@@ -21,33 +21,42 @@ static MainUI ui;
 static Fl_Native_File_Chooser file_chooser;
 static NodeUI * selected_node = NULL;
 
+static void cb_port_name_changed(Fl_Widget * w, void * data)
+{
+	Slot * slot = (Slot *)data;
+	Fl_Input * input = (Fl_Input *) w;
+	slot->name(input->value());
+	ui.workspace->redraw();
+}
+
+static void add_gate_name_property(int x, int y, const char * prefix, int idx, Slot * slot)
+{
+	char label[32];
+	sprintf(label, "Input#%d", idx);
+	Fl_Input * value_w = new Fl_Input(x + kPropertyLabelWidth, y, kPropertyValueWidth, kPropertyHeight);
+	value_w->callback(cb_port_name_changed, slot);
+	value_w->when(FL_WHEN_ENTER_KEY_CHANGED);
+	value_w->copy_label(label);
+	value_w->value(slot->name());
+}
 
 static void show_properties(NodeUI * node)
 {
 	selected_node = node;
 	ui.properties->clear();
+	if (!node) return;
 	ui.properties->begin();
 	int x = ui.properties->x() + 2; // Gap due to box
 	int y = ui.properties->y() + 2; // Gap due to box
 	Node * n = node->node();
 	// Add input names
 	for (int i = 0; i < n->input_count(); i++) {
-		char label[32];
-		sprintf(label, "Input#%d", i+1);
-		Slot * slot = n->input(i);
-		Fl_Input * value_w = new Fl_Input(x + kPropertyLabelWidth, y, kPropertyValueWidth, kPropertyHeight);
-		value_w->copy_label(label);
-		value_w->value(slot->name());
+		add_gate_name_property(x, y, "Input", i+1, n->input(i));
 		y += kPropertyHeight;
 	}
 	// Add output names
 	for (int i = 0; i < n->output_count(); i++) {
-		char label[32];
-		sprintf(label, "Output#%d", i+1);
-		Slot * slot = n->output(i);
-		Fl_Input * value_w = new Fl_Input(x + kPropertyLabelWidth, y, kPropertyValueWidth, kPropertyHeight);
-		value_w->copy_label(label);
-		value_w->value(slot->name());
+		add_gate_name_property(x, y, "Output", i+1, n->output(i));
 		y += kPropertyHeight;
 	}
 	ui.properties->end();
