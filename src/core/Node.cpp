@@ -14,7 +14,7 @@ static const int kNodeSlotSize = 10;
 static const int kSlotAreaWidth = 30;
 
 Node::Node(int x, int y, const char * name)
-	: _x(x), _y(y), _name(name)
+	: _x(x), _y(y), _name(name), _sel(0)
 {
 }
 
@@ -79,6 +79,20 @@ int Node::find_output(int x, int y)
 	return -1;
 }
 
+int Node::inside(int mx, int my)
+{
+	return mx >= x() && my >= y() && mx < x() + w() && my < y() + h();
+}
+
+int Node::is_edit_area(int x, int y)
+{
+	Slot * slot = edit_slot();
+	if (!slot) return 0;
+	int xx, yy, ww, hh;
+	get_client_rect(xx, yy, ww, hh);
+	return (x >= xx) && (y >= yy) && (x < xx + ww) && (y < yy + hh);
+}
+
 int Node::save_to(pugi::xml_node & node)
 {
 	// Save input/output names, since they might have changes
@@ -117,4 +131,15 @@ void Node::get_client_rect(int & x, int & y, int & w, int & h)
 	y = _y + kNodeHeader;
 	w = this->w() - 2 * kSlotAreaWidth;
 	h = this->h() - kNodeHeader;
+}
+
+int Node::edit()
+{
+	Slot * slot = edit_slot();
+	if (slot->type() == Slot::Bit) {
+		// Toggle bit
+		slot->set_bit(!slot->as_bit());
+		return 1;
+	}
+	return 0;
 }

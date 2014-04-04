@@ -65,7 +65,15 @@ class MainUI {open
           }
           MenuItem mnu_edit_dup {
             label {&Duplicate}
-            xywh {0 0 100 20} shortcut 0x400064
+            xywh {0 0 100 20} shortcut 0x400064 divider
+          }
+          MenuItem mnu_edit_group {
+            label {&Group}
+            xywh {0 0 100 20} shortcut 0x400067
+          }
+          MenuItem mnu_edit_ungroup {
+            label {&Group}
+            xywh {0 0 100 20} shortcut 0x410067
           }
         }
       }

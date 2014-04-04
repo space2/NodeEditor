@@ -19,7 +19,7 @@ static const int kPropertyHeight = 25;
 
 static MainUI ui;
 static Fl_Native_File_Chooser file_chooser;
-static NodeUI * selected_node = NULL;
+static Node * selected_node = NULL;
 
 static void cb_port_name_changed(Fl_Widget * w, void * data)
 {
@@ -40,7 +40,7 @@ static void add_gate_name_property(int x, int y, const char * prefix, int idx, S
 	value_w->value(slot->name());
 }
 
-static void show_properties(NodeUI * node)
+static void show_properties(Node * node)
 {
 	selected_node = node;
 	ui.properties->clear();
@@ -48,15 +48,14 @@ static void show_properties(NodeUI * node)
 	ui.properties->begin();
 	int x = ui.properties->x() + 2; // Gap due to box
 	int y = ui.properties->y() + 2; // Gap due to box
-	Node * n = node->node();
 	// Add input names
-	for (int i = 0; i < n->input_count(); i++) {
-		add_gate_name_property(x, y, "Input", i+1, n->input(i));
+	for (int i = 0; i < node->input_count(); i++) {
+		add_gate_name_property(x, y, "Input", i+1, node->input(i));
 		y += kPropertyHeight;
 	}
 	// Add output names
-	for (int i = 0; i < n->output_count(); i++) {
-		add_gate_name_property(x, y, "Output", i+1, n->output(i));
+	for (int i = 0; i < node->output_count(); i++) {
+		add_gate_name_property(x, y, "Output", i+1, node->output(i));
 		y += kPropertyHeight;
 	}
 	ui.properties->end();
@@ -165,7 +164,17 @@ static void cb_edit_dup(Fl_Widget * w, void * d)
 	ui.workspace->duplicate();
 }
 
-static void cb_workspace(Workspace::CallbackEvent event, NodeUI * param)
+static void cb_edit_group(Fl_Widget * w, void * d)
+{
+	ui.workspace->group();
+}
+
+static void cb_edit_ungroup(Fl_Widget * w, void * d)
+{
+	ui.workspace->ungroup();
+}
+
+static void cb_workspace(Workspace::CallbackEvent event, Node * param)
 {
 	if (event == Workspace::NodeSelected) {
 		show_properties(param);
@@ -218,6 +227,8 @@ static void setup_window()
 	ui.mnu_edit_copy->callback(cb_edit_copy);
 	ui.mnu_edit_paste->callback(cb_edit_paste);
 	ui.mnu_edit_dup->callback(cb_edit_dup);
+	ui.mnu_edit_group->callback(cb_edit_group);
+	ui.mnu_edit_ungroup->callback(cb_edit_ungroup);
 
 	ui.workspace->scrollbars(ui.scroll_h, ui.scroll_v);
 	ui.workspace->listener(cb_workspace);
@@ -228,6 +239,7 @@ static void setup_window()
 	ui.node_tree->margintop(0);
 	ui.node_tree->begin();
 	for (int i = 0; i < node_count(); i++) {
+		if (node_group(i)[0] == '_') continue; // These are hidden!
 		char buff[256];
 		snprintf(buff, sizeof(buff)-1, "%s/%s", node_group(i), node_name(i));
 		Fl_Tree_Item * item = ui.node_tree->add(buff);

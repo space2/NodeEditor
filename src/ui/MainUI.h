@@ -27,6 +27,8 @@ public:
   static Fl_Menu_Item *mnu_edit_copy;
   static Fl_Menu_Item *mnu_edit_paste;
   static Fl_Menu_Item *mnu_edit_dup;
+  static Fl_Menu_Item *mnu_edit_group;
+  static Fl_Menu_Item *mnu_edit_ungroup;
   Fl_Scrollbar *scroll_h;
   Fl_Scrollbar *scroll_v;
   Fl_Tree *node_tree;

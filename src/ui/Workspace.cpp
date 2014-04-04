@@ -11,9 +11,10 @@
 
 #include "core/Util.h"
 #include "core/NodeFactory.h"
+#include "core/GroupNode.h"
+#include "core/GroupPorts.h"
 
 #include "Workspace.h"
-#include "NodeUI.h"
 #include "DnD.h"
 
 static const int kGridSize = 10;
@@ -21,6 +22,18 @@ static const int kGridMajor = 10;
 static const int kGridMajorSize = 5;
 
 static const int kDragTreshold = 10;
+
+static const int kSlotColorsDefault[] = {40, 46, 50, FL_DARK3};
+static const int kSlotColors0[] = {40, 7, 7, FL_DARK3};
+static const int kSlotColors1[] = {40, 0, 0, FL_DARK3};
+
+static const int * choose_slot_colors(const Slot * slot)
+{
+	if (slot->type() == Slot::Bit) {
+		return slot->as_bit() ? kSlotColors1 : kSlotColors0;
+	}
+	return kSlotColorsDefault;
+}
 
 static int check_drag_dist(int dx, int dy)
 {
@@ -55,8 +68,6 @@ Workspace::~Workspace()
 
 void Workspace::clear()
 {
-	_nodes.clear();
-	_conns.clear();
 	delete _graph;
 	_graph = NULL;
 }
@@ -98,16 +109,6 @@ void Workspace::graph(Graph * graph)
 {
 	clear();
 	_graph = graph;
-
-	for (int i = 0; i < _graph->node_count(); i++) {
-		NodeUI * node = new NodeUI(_graph->node(i));
-		_nodes.add(node);
-	}
-
-	for (int i = 0; i < _graph->connection_count(); i++) {
-		_conns.add(new ConnectionUI(_graph->connection(i)));
-	}
-
 	set_scrollbar_range();
 	_sel_count = 0;
 	if (_cb) _cb(NodeSelected, NULL);
@@ -147,7 +148,7 @@ int Workspace::handle(int event)
 	int ret = 0, dx = 0, dy = 0, in_idx, out_idx, edit_area;
 	int mx = s2gx(Fl::event_x());
 	int my = s2gy(Fl::event_y());
-	NodeUI * node = NULL;
+	Node * node = NULL;
 	switch (event) {
 	case FL_ENTER:
 		ret = 1;
@@ -184,20 +185,20 @@ int Workspace::handle(int event)
 			_state = Edit;
 			_sel_conn_node = node;
 		} else if (in_idx >= 0) {
-			ConnectionUI * conn = find_connection_to(node, in_idx);
+			Connection * conn = find_connection_to(node, in_idx);
 			if (conn) {
-				start_connection_drag(conn->conn()->from(), conn->conn()->out_idx(), DragIn);
+				start_connection_drag(conn->from(), conn->out_idx(), DragIn);
 				delete_connection(conn);
 			} else {
-				start_connection_drag(node->node(), in_idx, DragOut);
+				start_connection_drag(node, in_idx, DragOut);
 			}
 		} else if (out_idx >= 0) {
-			ConnectionUI * conn = find_connection_from(node, out_idx);
+			Connection * conn = find_connection_from(node, out_idx);
 			if (conn) {
-				start_connection_drag(conn->conn()->to(), conn->conn()->in_idx(), DragOut);
+				start_connection_drag(conn->to(), conn->in_idx(), DragOut);
 				delete_connection(conn);
 			} else {
-				start_connection_drag(node->node(), out_idx, DragIn);
+				start_connection_drag(node, out_idx, DragIn);
 			}
 		} else if (node) {
 			select_node(node, Fl::event_shift());
@@ -278,8 +279,8 @@ int Workspace::handle(int event)
 
 void Workspace::drag_selected(int dx, int dy)
 {
-	for (int i = 0; i < _nodes.count(); i++) {
-		NodeUI * node = _nodes[i];
+	for (int i = 0; i < _graph->node_count(); i++) {
+		Node * node = _graph->node(i);
 		if (node->selected()) {
 			node->move(dx, dy);
 		}
@@ -287,10 +288,10 @@ void Workspace::drag_selected(int dx, int dy)
 	redraw();
 }
 
-NodeUI * Workspace::find_node_below(int x, int y)
+Node * Workspace::find_node_below(int x, int y)
 {
-	for (int i = _nodes.count()-1; i >= 0; i--) {
-		NodeUI * node = _nodes[i];
+	for (int i = _graph->node_count()-1; i >= 0; i--) {
+		Node * node = _graph->node(i);
 		if (node->inside(x, y)) {
 			return node;
 		}
@@ -349,15 +350,84 @@ void Workspace::draw_connection(int x0, int y0, int x1, int y1, int col0, int co
 
 void Workspace::draw_nodes()
 {
-	for (int i = 0; i < _nodes.count(); i++) {
-		_nodes[i]->draw(g2sx(0), g2sy(0));
+	for (int i = 0; i < _graph->node_count(); i++) {
+		draw_node(_graph->node(i), g2sx(0), g2sy(0));
+	}
+}
+
+int Workspace::node_color(Node * node)
+{
+	if (node->selected()) {
+		return _high == node ? 167 : 166;
+	} else {
+		return _high == node ? 51 : 49;
+	}
+}
+
+void Workspace::draw_node(Node * node, int dx, int dy)
+{
+	int x = node->x() + dx, y = node->y() + dy, w = node->w(), h = node->h();
+
+	// Render box
+	fl_draw_box(FL_UP_BOX, x, y, w, h, node_color(node));
+
+	// Render label
+	fl_color(FL_BLACK);
+	fl_font(FL_HELVETICA, 10);
+	fl_draw(node->name(), x, y, w, h, FL_ALIGN_TOP | FL_ALIGN_INSIDE, NULL, 0);
+
+	// Draw extra overlays
+	fl_color(FL_DARK2);
+	fl_xyline(x + 2, y + 13, x + w - 2);
+	fl_font(FL_HELVETICA, 8);
+	for (int i = 0; i < node->input_count(); i++) {
+		const int * slot_colors = choose_slot_colors(node->input(i));
+		int xx = x;
+		int yy = dy + node->input_y(i);
+		fl_color(slot_colors[0]);
+		fl_pie(xx-4, yy-4, 9, 9, -90, 90);
+		fl_color(slot_colors[1]);
+		fl_pie(xx-3, yy-3, 7, 7, -90, 90);
+		fl_color(slot_colors[2]);
+		fl_line(xx+1, yy-3, xx+1, yy+3);
+		fl_color(slot_colors[3]);
+		fl_draw(node->input(i)->name(), xx + 5, yy + 1);
+	}
+	for (int i = 0; i < node->output_count(); i++) {
+		const int * slot_colors = choose_slot_colors(node->output(i));
+		int xx = x + w - 1;
+		int yy = dy + node->output_y(i);
+		fl_color(slot_colors[0]);
+		fl_pie(xx-4, yy-4, 9, 9, 90, 270);
+		fl_color(slot_colors[1]);
+		fl_pie(xx-3, yy-3, 7, 7, 90, 270);
+		fl_color(slot_colors[2]);
+		fl_line(xx, yy-3, xx, yy+3);
+		fl_color(slot_colors[3]);
+		int tw = 0, th = 0;
+		fl_measure(node->output(i)->name(), tw, th, 0);
+		fl_draw(node->output(i)->name(), xx - 5 - tw, yy + 1);
+	}
+
+	// Draw value
+	const Slot * slot = node->edit_slot();
+	if (!slot) slot = node->show_slot();
+	if (slot) {
+		if (slot->type() == Slot::Bit) {
+			const char * v = Util::bit2string(slot->as_bit());
+			fl_color(FL_BLACK);
+			fl_font(FL_COURIER, 16);
+			fl_draw(v, x, y + 15, w, h - 15, FL_ALIGN_CENTER, NULL, 0);
+		} else {
+			// TODO: Render the other types
+		}
 	}
 }
 
 void Workspace::draw_connections()
 {
-	for (int i = 0; i < _conns.count(); i++) {
-		Connection * conn = _conns[i]->conn();
+	for (int i = 0; i < _graph->connection_count(); i++) {
+		Connection * conn = _graph->connection(i);
 		int x0 = conn->from()->output_x(conn->out_idx());
 		int y0 = conn->from()->output_y(conn->out_idx());
 		int x1 = conn->to()->input_x(conn->in_idx());
@@ -366,31 +436,25 @@ void Workspace::draw_connections()
 	}
 
 	if (_state == DragIn) {
-		int x0 = _sel_conn_node->node()->output_x(_sel_conn_idx);
-		int y0 = _sel_conn_node->node()->output_y(_sel_conn_idx);
+		int x0 = _sel_conn_node->output_x(_sel_conn_idx);
+		int y0 = _sel_conn_node->output_y(_sel_conn_idx);
 		draw_connection(x0, y0, _start_x, _start_y, 72, 88);
 	}
 
 	if (_state == DragOut) {
-		int x0 = _sel_conn_node->node()->input_x(_sel_conn_idx);
-		int y0 = _sel_conn_node->node()->input_y(_sel_conn_idx);
+		int x0 = _sel_conn_node->input_x(_sel_conn_idx);
+		int y0 = _sel_conn_node->input_y(_sel_conn_idx);
 		draw_connection(_start_x, _start_y, x0, y0, 72, 88);
 	}
 }
 
-void Workspace::highlight(NodeUI * node)
+void Workspace::highlight(Node * node)
 {
-	if (_high) {
-		_high->highlighted(0);
-	}
 	_high = node;
-	if (_high) {
-		_high->highlighted(1);
-	}
 	redraw();
 }
 
-void Workspace::select_node(NodeUI * node, int toggle)
+void Workspace::select_node(Node * node, int toggle)
 {
 	if (!node) return;
 	if (toggle) {
@@ -400,8 +464,8 @@ void Workspace::select_node(NodeUI * node, int toggle)
 		redraw();
 	} else {
 		if (node->selected()) return; // NOP
-		for (int i = 0; i < _nodes.count(); i++) {
-			_nodes[i]->selected(0);
+		for (int i = 0; i < _graph->node_count(); i++) {
+			_graph->node(i)->selected(0);
 		}
 		node->selected(1);
 		_sel_count = 1;
@@ -417,21 +481,20 @@ void Workspace::select_nodes_in_rect(int x0, int y0, int x1, int y1, SelectOp op
 	if (op == SelectSet) {
 		unselect_all();
 	}
-	for (int i = 0; i < _nodes.count(); i++) {
-		NodeUI * node = _nodes[i];
-		Node * n = node->node();
+	for (int i = 0; i < _graph->node_count(); i++) {
+		Node * n = _graph->node(i);
 		if (n->x() > x1) continue;
 		if (n->y() > y1) continue;
 		if (n->x() + n->w() < x0) continue;
 		if (n->y() + n->h() < y0) continue;
 		if (op == SelectAdd || op == SelectSet) {
-			if (!node->selected()) {
-				node->selected(1);
+			if (!n->selected()) {
+				n->selected(1);
 				_sel_count++;
 			}
 		} else {
-			if (node->selected()) {
-				node->selected(0);
+			if (n->selected()) {
+				n->selected(0);
 				_sel_count--;
 			}
 		}
@@ -442,43 +505,41 @@ void Workspace::select_nodes_in_rect(int x0, int y0, int x1, int y1, SelectOp op
 
 void Workspace::select_all()
 {
-	for (int i = 0; i < _nodes.count(); i++) {
-		_nodes[i]->selected(1);
+	for (int i = 0; i < _graph->node_count(); i++) {
+		_graph->node(i)->selected(1);
 	}
-	_sel_count = _nodes.count();
+	_sel_count = _graph->node_count();
 	if (_cb) _cb(NodeSelected, NULL);
 	redraw();
 }
 
 void Workspace::unselect_all()
 {
-	for (int i = 0; i < _nodes.count(); i++) {
-		_nodes[i]->selected(0);
+	for (int i = 0; i < _graph->node_count(); i++) {
+		_graph->node(i)->selected(0);
 	}
 	_sel_count = 0;
 	if (_cb) _cb(NodeSelected, NULL);
 	redraw();
 }
 
-ConnectionUI * Workspace::find_connection_to(const NodeUI * node, int in_idx)
+Connection * Workspace::find_connection_to(const Node * node, int in_idx)
 {
-	const Node * n = node->node();
-	for (int i = 0; i < _conns.count(); i++) {
-		Connection * conn = _conns[i]->conn();
-		if (conn->to() == n && conn->in_idx() == in_idx) {
-			return _conns[i];
+	for (int i = 0; i < _graph->connection_count(); i++) {
+		Connection * conn = _graph->connection(i);
+		if (conn->to() == node && conn->in_idx() == in_idx) {
+			return _graph->connection(i);
 		}
 	}
 	return NULL;
 }
 
-ConnectionUI * Workspace::find_connection_from(const NodeUI * node, int out_idx)
+Connection * Workspace::find_connection_from(const Node * node, int out_idx)
 {
-	const Node * n = node->node();
-	for (int i = 0; i < _conns.count(); i++) {
-		Connection * conn = _conns[i]->conn();
-		if (conn->from() == n && conn->out_idx() == out_idx) {
-			return _conns[i];
+	for (int i = 0; i < _graph->connection_count(); i++) {
+		Connection * conn = _graph->connection(i);
+		if (conn->from() == node && conn->out_idx() == out_idx) {
+			return _graph->connection(i);
 		}
 	}
 	return NULL;
@@ -486,43 +547,30 @@ ConnectionUI * Workspace::find_connection_from(const NodeUI * node, int out_idx)
 
 void Workspace::start_connection_drag(Node * node, int idx, State state)
 {
-	_sel_conn_node = find_node(node);
+	_sel_conn_node = node;
 	_sel_conn_idx = idx;
 	_state = state;
 	redraw();
 }
 
-void Workspace::delete_connection(ConnectionUI * conn)
+void Workspace::delete_connection(Connection * conn)
 {
-	_graph->remove(conn->conn());
-	_conns.remove(conn);
+	_graph->remove(conn);
 	redraw();
 }
 
-void Workspace::add_connection(NodeUI * from, int out_idx, NodeUI * to, int in_idx)
+void Workspace::add_connection(Node * from, int out_idx, Node * to, int in_idx)
 {
 	// Need to remove old connection to the input
-	ConnectionUI * old = find_connection_to(to, in_idx);
+	Connection * old = find_connection_to(to, in_idx);
 	if (old) {
 		delete_connection(old);
 	}
 
 	// Add new connection
-	Connection * conn = new Connection(from->node(), out_idx, to->node(), in_idx);
+	Connection * conn = new Connection(from, out_idx, to, in_idx);
 	_graph->add(conn);
-	ConnectionUI * connui = new ConnectionUI(conn);
-	_conns.add(connui);
 	redraw();
-}
-
-NodeUI * Workspace::find_node(Node * node)
-{
-	for (int i = 0; i < _nodes.count(); i++) {
-		if (_nodes[i]->node() == node) {
-			return _nodes[i];
-		}
-	}
-	return NULL;
 }
 
 void Workspace::add_node(const char * name, int x, int y)
@@ -533,8 +581,6 @@ void Workspace::add_node(const char * name, int x, int y)
 		return;
 	}
 	_graph->add(node);
-	NodeUI * nodeui = new NodeUI(node);
-	_nodes.add(nodeui);
 	_graph->calc();
 	redraw();
 }
@@ -543,9 +589,9 @@ void Workspace::cut()
 {
 	copy();
 	if (!_sel_count) return;
-	for (int i = _nodes.count()-1; i >= 0; i--) {
-		if (!_nodes[i]->selected()) continue;
-		remove(_nodes[i]);
+	for (int i = _graph->node_count()-1; i >= 0; i--) {
+		if (!_graph->node(i)->selected()) continue;
+		remove(_graph->node(i));
 	}
 	_sel_count = 0;
 	_graph->calc();
@@ -561,10 +607,10 @@ void Workspace::copy()
 	}
 	_clipboard.reset();
 	pugi::xml_node root = _clipboard.append_child("clipboard");
-	int cnt = _nodes.count();
+	int cnt = _graph->node_count();
 	for (int i = 0; i < cnt; i++) {
-		if (!_nodes[i]->selected()) continue;
-		Node * old = _nodes[i]->node();
+		if (!_graph->node(i)->selected()) continue;
+		Node * old = _graph->node(i);
 		pugi::xml_node n = root.append_child("node");
 		n.append_attribute("name").set_value(old->name());
 		n.append_attribute("x").set_value(old->x());
@@ -589,9 +635,7 @@ void Workspace::paste()
 		Node * clone = new_node(name, x, y);
 		clone->load_from(child);
 		_graph->add(clone);
-		NodeUI * nodeui = new NodeUI(clone);
-		_nodes.add(nodeui);
-		nodeui->selected(1);
+		clone->selected(1);
 		_sel_count++;
 		child = child.next_sibling();
 	}
@@ -606,35 +650,113 @@ void Workspace::duplicate()
 		fl_alert("No nodes selected!");
 		return;
 	}
-	int cnt = _nodes.count();
+	int cnt = _graph->node_count();
 	for (int i = 0; i < cnt; i++) {
-		if (!_nodes[i]->selected()) continue;
-		Node * old = _nodes[i]->node();
+		if (!_graph->node(i)->selected()) continue;
+		Node * old = _graph->node(i);
 		Node * clone = new_node(old->name(), old->x() + 10, old->y() + 10);
 		if (!clone) continue; // Maybe we should log this?
 		pugi::xml_node tmp;
 		old->save_to(tmp);
 		clone->load_from(tmp);
 		_graph->add(clone);
-		NodeUI * nodeui = new NodeUI(clone);
-		_nodes.add(nodeui);
-
-		_nodes[i]->selected(0);
-		nodeui->selected(1);
+		_graph->node(i)->selected(0);
+		clone->selected(1);
 	}
 	_graph->calc();
 	redraw();
 }
 
-void Workspace::remove(NodeUI * nodeui)
+void Workspace::remove(Node * node)
 {
-	Node * node = nodeui->node();
-	for (int i = _conns.count()-1; i >= 0; i--) {
-		Connection * conn = _conns[i]->conn();
-		if (conn->from() == node || conn->to() == node) {
-			_conns.remove_at(i);
+	_graph->remove(node);
+}
+
+void Workspace::group()
+{
+	if (!_sel_count) {
+		fl_alert("No nodes selected!");
+		return;
+	}
+
+	// Calculate bounding box of selected nodes
+	int min_x = 0, min_y = 0, max_x = 0, max_y = 0;
+	for (int i = 0; i < _graph->node_count(); i++) {
+		Node * node = _graph->node(i);
+		if (!node->selected()) continue;
+		min_x = Util::min(min_x, node->x());
+		min_y = Util::min(min_y, node->y());
+		max_x = Util::max(max_x, node->x() + node->w());
+		max_y = Util::max(max_y, node->y() + node->h());
+	}
+
+	// Create group node and add to graph
+	Group * grp = new Group("Group");
+	GroupNode * grp_node = new GroupNode((min_x + max_x) / 2, (min_y + max_y) / 2, grp);
+	_graph->add(grp_node);
+	GroupPorts * grp_inputs = new GroupPorts(min_x, (min_y + max_y) / 2);
+	grp_node->inports(grp_inputs);
+	GroupPorts * grp_outputs = new GroupPorts(max_x, (min_y + max_y) / 2);
+	grp_node->outports(grp_outputs);
+
+	// Copy selected nodes to new group node
+	Array<Node*> nodes_to_delete;
+	int cnt = _graph->node_count();
+	for (int i = 0; i < cnt; i++) {
+		if (!_graph->node(i)->selected()) continue;
+		Node * node = _graph->node(i);
+		grp->add(node);
+		nodes_to_delete.add(node);
+	}
+
+	// Copy connections which are completely in the selection
+	Array<Connection*> conns_to_delete;
+	for (int i = 0; i < _graph->connection_count(); i++) {
+		Connection * conn = _graph->connection(i);
+		if (conn->from()->selected() && conn->to()->selected()) {
+			grp->add(conn);
+			conns_to_delete.add(conn);
 		}
 	}
-	_graph->remove(node);
-	_nodes.remove(nodeui);
+
+	// For every connections which is between a selected and not-selected node,
+	// add a port to the group, and connect it
+	for (int i = 0; i < _graph->connection_count(); i++) {
+		Connection * conn = _graph->connection(i);
+		if (conn->from()->selected() && conn->to()->selected()) continue; // Already processed
+		if (conn->from()->selected()) {
+			Slot * old_output = conn->from()->output(conn->out_idx());
+			Slot * old_input = conn->to()->input(conn->in_idx());
+			int new_in_idx = grp_outputs->copy_input(old_input);
+			int new_out_idx = grp_node->copy_output(old_output);
+			Connection * int_conn = new Connection(conn->from(), conn->out_idx(), grp_outputs, new_in_idx);
+			grp->add(int_conn);
+			conn->from(grp_node, new_out_idx);
+		} else if (conn->to()->selected()) {
+			Slot * old_output = conn->from()->output(conn->out_idx());
+			Slot * old_input = conn->to()->input(conn->in_idx());
+			int new_in_idx = grp_inputs->copy_output(old_output);
+			int new_out_idx = grp_node->copy_input(old_input);
+			Connection * int_conn = new Connection(grp_inputs, new_out_idx, conn->to(), conn->in_idx());
+			grp->add(int_conn);
+			conn->to(grp_node, new_in_idx);
+		}
+	}
+
+	// Cleanup
+	for (int i = 0; i < nodes_to_delete.count(); i++) {
+		_graph->remove(nodes_to_delete[i], 1);
+	}
+	for (int i = 0; i < conns_to_delete.count(); i++) {
+		_graph->remove(conns_to_delete[i], 1);
+	}
+
+	// Recalculate network
+	_graph->calc();
+	redraw();
+}
+
+void Workspace::ungroup()
+{
+	// TODO
 }

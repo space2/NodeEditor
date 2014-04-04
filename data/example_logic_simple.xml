@@ -9,12 +9,20 @@
 	<node id="2" name="BitInput" x="12" y="95" output_0="out">
 		<val type="bit" value="0" />
 	</node>
-	<node id="3" name="And" x="229" y="195" input_0="in0" input_1="in1" output_0="output" />
-	<node id="4" name="And" x="205" y="74" input_0="in0" input_1="in1" output_0="out" />
-	<node id="5" name="BitOutput" x="415" y="187" input_0="in" />
+	<node id="3" name="BitOutput" x="415" y="187" input_0="in" />
+	<node id="4" name="Group" x="164" y="117" input_0="in0" input_1="in1" input_2="in1" output_0="output" nr_inputs="3" nr_outputs="1" inports="0" outports="1">
+		<node id="0" name="Ports" x="0" y="117" output_0="out" output_1="out" output_2="out" nr_inputs="0" nr_outputs="3" />
+		<node id="1" name="Ports" x="329" y="117" input_0="in" nr_inputs="1" nr_outputs="0" />
+		<node id="2" name="And" x="229" y="195" input_0="in0" input_1="in1" output_0="output" />
+		<node id="3" name="And" x="205" y="74" input_0="in0" input_1="in1" output_0="out" />
+		<connection id="0" from="3" out="0" to="2" in="0" />
+		<connection id="1" from="0" out="0" to="3" in="0" />
+		<connection id="2" from="0" out="1" to="3" in="1" />
+		<connection id="3" from="0" out="2" to="2" in="1" />
+		<connection id="4" from="2" out="0" to="1" in="0" />
+	</node>
 	<connection id="0" from="0" out="0" to="4" in="0" />
 	<connection id="1" from="2" out="0" to="4" in="1" />
-	<connection id="2" from="1" out="0" to="3" in="1" />
+	<connection id="2" from="1" out="0" to="4" in="2" />
 	<connection id="3" from="4" out="0" to="3" in="0" />
-	<connection id="4" from="3" out="0" to="5" in="0" />
 </graph>

@@ -12,9 +12,7 @@
 
 #include "core/Graph.h"
 #include "core/Array.h"
-
-#include "NodeUI.h"
-#include "ConnectionUI.h"
+#include "core/Connection.h"
 
 class Workspace : public Fl_Widget {
 public:
@@ -38,8 +36,10 @@ public:
 	void duplicate();
 	void select_all();
 	void unselect_all();
+	void group();
+	void ungroup();
 
-	void listener(void (*cb)(CallbackEvent event, NodeUI * param)) { _cb = cb; }
+	void listener(void (*cb)(CallbackEvent event, Node * param)) { _cb = cb; }
 protected:
 	void draw();
 	int handle(int event);
@@ -63,22 +63,23 @@ private:
 	void draw_background();
 	void draw_connections();
 	void draw_nodes();
+	void draw_node(Node * node, int dx, int dy);
 	void draw_connection(int x0, int y0, int x1, int y1, int col0, int col1);
 	void draw_selection();
 	void clear();
-	NodeUI * find_node_below(int x, int y);
-	void highlight(NodeUI * node);
-	void select_node(NodeUI * node, int toggle);
+	int node_color(Node * node);
+	Node * find_node_below(int x, int y);
+	void highlight(Node * node);
+	void select_node(Node * node, int toggle);
 	void select_nodes_in_rect(int x0, int y0, int x1, int y1, SelectOp op);
 	void drag_selected(int dx, int dy);
-	ConnectionUI * find_connection_to(const NodeUI * node, int in_idx);
-	ConnectionUI * find_connection_from(const NodeUI * node, int out_idx);
+	Connection * find_connection_to(const Node * node, int in_idx);
+	Connection * find_connection_from(const Node * node, int out_idx);
 	void start_connection_drag(Node * node, int idx, State state);
-	void delete_connection(ConnectionUI * conn);
-	void add_connection(NodeUI * from, int out_idx, NodeUI * to, int in_idx);
-	NodeUI * find_node(Node * node);
+	void delete_connection(Connection * conn);
+	void add_connection(Node * from, int out_idx, Node * to, int in_idx);
 	void set_scrollbar_range();
-	void remove(NodeUI * nodeui);
+	void remove(Node * node);
 
 	int s2gx(int xx) { return xx - x() + _scroll_x; }
 	int s2gy(int yy) { return yy - y() + _scroll_y; }
@@ -89,17 +90,15 @@ private:
 	static void cb_scroll_y(Fl_Widget * w, void * d);
 
 	Graph * _graph;
-	ArrayO<NodeUI*> _nodes;
-	ArrayO<ConnectionUI*> _conns;
-	NodeUI * _high;
+	Node * _high;
 	int _start_x, _start_y, _end_x, _end_y, _sel_count;
-	NodeUI * _sel_conn_node;
+	Node * _sel_conn_node;
 	int _sel_conn_idx;
 	State _state;
 	int _scroll_x, _scroll_y;
 	Fl_Scrollbar * _scr_h;
 	Fl_Scrollbar * _scr_v;
-	void (*_cb)(CallbackEvent event, NodeUI * param);
+	void (*_cb)(CallbackEvent event, Node * param);
 	pugi::xml_document _clipboard;
 };
 

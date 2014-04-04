@@ -74,10 +74,10 @@ public:
 		return _count-1;
 	}
 
-	int remove(T data) {
+	int remove(T data, int keep = 0) {
 		for (int i = 0; i < _count; i++) {
 			if (data == _data[i]) {
-				return remove_at(i);
+				return remove_at(i, keep);
 			}
 		}
 		return 0;
@@ -96,9 +96,9 @@ public:
 		return 0 <= indexof(data);
 	}
 
-	int remove_at(int idx) {
+	int remove_at(int idx, int keep = 0) {
 		if (idx < 0 || idx >= _count) return 0;
-		_free(_data[idx]);
+		if (!keep) _free(_data[idx]);
 		_count--;
 		for (int i = idx; i < _count; i++) {
 			_data[i] = _data[i+1];

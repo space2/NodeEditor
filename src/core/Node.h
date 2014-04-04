@@ -43,10 +43,17 @@ public:
 
 	int find_input(int x, int y);
 	int find_output(int x, int y);
+	int inside(int mx, int my);
+	int is_edit_area(int x, int y);
 
 	void get_client_rect(int & x, int & y, int & w, int & h);
 
 	void move(int dx, int dy);
+
+	int selected() const { return _sel; }
+	void selected(int v) { _sel = v; }
+
+	int edit();
 
 	virtual int save_to(pugi::xml_node & node);
 	virtual int load_from(pugi::xml_node & node);
@@ -61,5 +68,6 @@ protected:
 private:
 	int _x, _y;
 	const char * _name;
+	int _sel;
 };
 
