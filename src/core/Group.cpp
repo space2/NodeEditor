@@ -235,7 +235,7 @@ void Group::add_inports(GroupPorts * ports)
 
 void Group::add_outports(GroupPorts * ports)
 {
-	assert(_inports == NULL);
+	assert(_outports == NULL);
 	_outports = ports;
 	add(ports);
 }
