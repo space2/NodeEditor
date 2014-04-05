@@ -36,7 +36,6 @@ int DynamicNode::save_to(pugi::xml_node & node)
 
 int DynamicNode::load_from(pugi::xml_node & node)
 {
-	if (!Node::load_from(node)) return 0;
 	int nr_inputs = node.attribute("nr_inputs").as_int();
 	int nr_outputs = node.attribute("nr_outputs").as_int();
 	char buff[32];
@@ -48,5 +47,7 @@ int DynamicNode::load_from(pugi::xml_node & node)
 		sprintf(buff, "output%d", i);
 		_outputs.add(new Slot(buff));
 	}
+	// We can load the node properties after the ports are created!
+	if (!Node::load_from(node)) return 0;
 	return 1;
 }
