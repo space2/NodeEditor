@@ -355,31 +355,6 @@ static void cb_workspace(Workspace::CallbackEvent event, Node * param)
 static void setup_graph()
 {
 	Graph * graph = new Graph();
-
-#if 1
-	graph->load_from_file("data/example_logic_simple.xml");
-#else
-	BitInput * inp1 = new BitInput(10, 10);
-	BitInput * inp2 = new BitInput(10, 100);
-	BitInput * inp3 = new BitInput(10, 190);
-	AndGate * and_gate1 = new AndGate(200, 100);
-	AndGate * and_gate2 = new AndGate(300, 200);
-	BitOutput * out = new BitOutput(490, 200);
-
-	graph->add(inp1);
-	graph->add(inp2);
-	graph->add(inp3);
-	graph->add(and_gate1);
-	graph->add(and_gate2);
-	graph->add(out);
-
-	graph->add(new Connection(inp1, 0, and_gate1, 0));
-	graph->add(new Connection(inp2, 0, and_gate1, 1));
-	graph->add(new Connection(and_gate1, 0, and_gate2, 0));
-	graph->add(new Connection(inp3, 0, and_gate2, 1));
-	graph->add(new Connection(and_gate2, 0, out, 0));
-#endif
-
 	ui.workspace->graph(graph);
 	update_window_title();
 }
