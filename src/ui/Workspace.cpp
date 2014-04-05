@@ -338,11 +338,11 @@ void Workspace::draw_background()
 	}
 }
 
-static int map_dist_to_tangent(int dist)
+static float map_dist_to_tangent(int dist, int max)
 {
 	if (dist < 0) dist = -dist;
-	int ret = dist * 50 / 100;
-	if (ret > 50) ret = 50;
+	float ret = dist * 1.0f / max;
+	if (ret > 1) ret = 1;
 	return ret;
 }
 
@@ -352,7 +352,7 @@ void Workspace::draw_connection(int x0, int y0, int x1, int y1, int col0, int co
 	y0 = g2sy(y0);
 	x1 = g2sx(x1);
 	y1 = g2sy(y1);
-	int t = map_dist_to_tangent(x0 - x1) + map_dist_to_tangent(y0 - y1);
+	int t = 100*map_dist_to_tangent(x0 - x1, 200) + 50*map_dist_to_tangent(y0 - y1, 50);
 	fl_line_style(FL_SOLID | FL_CAP_ROUND | FL_JOIN_ROUND, 3);
 	fl_color(col0);
 	fl_begin_line();
