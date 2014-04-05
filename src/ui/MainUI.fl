@@ -92,7 +92,7 @@ class MainUI {open
         }
         Fl_Button tb_down {
           label {@2>}
-          xywh {775 20 25 25}
+          xywh {605 20 25 25}
         }
         Fl_Tile {} {open
           xywh {580 45 220 555} align 5 resizable
@@ -104,8 +104,9 @@ class MainUI {open
             xywh {580 320 220 280} box DOWN_BOX color 7
           } {}
         }
-        Fl_Box group_name {
-          xywh {605 19 170 27}
+        Fl_Button tb_export {
+          label {@+}
+          xywh {630 20 25 25}
         }
       }
     }

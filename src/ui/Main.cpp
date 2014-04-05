@@ -10,6 +10,7 @@
 
 #include "core/Graph.h"
 #include "core/NodeFactory.h"
+#include "GroupNodeFactory.h"
 
 #include "MainUI.h"
 #include "NodeLabel.h"
@@ -71,6 +72,16 @@ private:
 	Node * _node;
 	int _output, _idx;
 };
+
+static void add_node_factory_to_browser(NodeFactory * nf)
+{
+	if (nf->group()[0] == '_') return; // These are hidden!
+	char buff[256];
+	snprintf(buff, sizeof(buff)-1, "%s/%s", nf->group(), nf->type());
+	Fl_Tree_Item * item = ui.node_tree->add(buff);
+	NodeLabel * label = new NodeLabel(1, 1, 150, 1, nf->type());
+	item->widget(label);
+}
 
 static void cb_port_name_changed(Fl_Widget * w, void * data)
 {
@@ -274,13 +285,45 @@ static void cb_tb_down(Fl_Widget * w, void * d)
 	ui.tb_up->activate();
 }
 
+static void cb_tb_export(Fl_Widget * w, void * d)
+{
+	if (!_selected_group) return;
+	const char * name = fl_input("Export selected group node as:", _selected_group->name());
+	if (!name) return;
+	NodeFactory * nf = find_node_factory(name);
+	int update_browser = 1;
+	if (nf) {
+		if (nf->builtin()) {
+			fl_alert("Sorry, you cannot replace a builtin node type!");
+			return;
+		} else {
+			if (fl_choice("Macro already exists!\nDo you want to overwrite it?", "Cancel", "Yes", NULL)) {
+				unregiser_node_factory(name);
+				update_browser = 0; // No need to update, since we are replacing existing item
+			} else {
+				return;
+			}
+		}
+	}
+	nf = new GroupNodeFactory(_selected_group);
+	register_node_factory(nf);
+	if (update_browser) {
+		ui.node_tree->begin();
+		add_node_factory_to_browser(nf);
+		ui.node_tree->redraw();
+		ui.node_tree->end();
+	}
+}
+
 static void check_selected_group(Node * param)
 {
 	_selected_group = dynamic_cast<Group*>(param);
 	if (_selected_group) {
 		ui.tb_down->activate();
+		ui.tb_export->activate();
 	} else {
 		ui.tb_down->deactivate();
+		ui.tb_export->deactivate();
 	}
 }
 
@@ -346,6 +389,8 @@ static void setup_window()
 	ui.tb_up->deactivate();
 	ui.tb_down->callback(cb_tb_down);
 	ui.tb_down->deactivate();
+	ui.tb_export->callback(cb_tb_export);
+	ui.tb_export->deactivate();
 
 	ui.workspace->scrollbars(ui.scroll_h, ui.scroll_v);
 	ui.workspace->listener(cb_workspace);
@@ -355,13 +400,9 @@ static void setup_window()
 	ui.node_tree->marginleft(0);
 	ui.node_tree->margintop(0);
 	ui.node_tree->begin();
-	for (int i = 0; i < node_count(); i++) {
-		if (node_group(i)[0] == '_') continue; // These are hidden!
-		char buff[256];
-		snprintf(buff, sizeof(buff)-1, "%s/%s", node_group(i), node_name(i));
-		Fl_Tree_Item * item = ui.node_tree->add(buff);
-		NodeLabel * label = new NodeLabel(1, 1, 150, 1, node_name(i));
-		item->widget(label);
+	for (int i = 0; i < node_factory_count(); i++) {
+		NodeFactory * nf = node_factory(i);
+		add_node_factory_to_browser(nf);
 	}
 	ui.node_tree->end();
 }

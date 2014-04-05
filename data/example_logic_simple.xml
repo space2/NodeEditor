@@ -10,7 +10,7 @@
 		<val type="bit" value="1" />
 	</node>
 	<node id="3" type="BitOutput" x="415" y="187" input_0="in" />
-	<node id="4" type="Group" x="222" y="104" input_0="input0" input_1="input1" input_2="input2" output_0="output0" nr_inputs="3" nr_outputs="1" inports="0" outports="1">
+	<node id="4" type="Group" x="222" y="104" name="MultiOr" input_0="input0" input_1="input1" input_2="input2" output_0="output0" nr_inputs="3" nr_outputs="1" inports="0" outports="1">
 		<node id="0" type="Ports" x="3" y="125" output_0="output0" output_1="output1" output_2="output2" nr_inputs="0" nr_outputs="3" />
 		<node id="1" type="Ports" x="370" y="122" input_0="input0" nr_inputs="1" nr_outputs="0" />
 		<node id="2" type="Or" x="206" y="59" input_0="in0" input_1="in1" output_0="out" />

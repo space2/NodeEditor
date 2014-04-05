@@ -12,7 +12,6 @@
 #include <FL/Fl_Tile.H>
 #include <FL/Fl_Tree.H>
 #include <FL/Fl_Scroll.H>
-#include <FL/Fl_Box.H>
 
 class MainUI {
 public:
@@ -38,6 +37,6 @@ public:
   Fl_Button *tb_down;
   Fl_Tree *node_tree;
   Fl_Scroll *properties;
-  Fl_Box *group_name;
+  Fl_Button *tb_export;
 };
 #endif
