@@ -778,9 +778,20 @@ void Workspace::group_selected()
 			// Create input port
 			Slot * old_output = conn->from()->output(conn->out_idx());
 			Slot * old_input = conn->to()->input(conn->in_idx());
-			int new_in_idx = grp_inputs->copy_output(old_output);
-			int new_out_idx = grp->copy_input(old_input);
-			Connection * int_conn = new Connection(grp_inputs, new_out_idx, conn->to(), conn->in_idx());
+			int new_in_idx = -1;
+			for (int j = 0; j < inport_orig_node.count(); j++) {
+				if (inport_orig_node[j] == conn->from() && inport_orig_idx[j] == conn->out_idx()) {
+					new_in_idx = inport_new_idx[j];
+				}
+			}
+			if (new_in_idx < 0) {
+				new_in_idx = grp_inputs->copy_output(old_output);
+				/* new_out_idx */ grp->copy_input(old_input);
+				inport_orig_node.add(conn->from());
+				inport_orig_idx.add(conn->out_idx());
+				inport_new_idx.add(new_in_idx);
+			}
+			Connection * int_conn = new Connection(grp_inputs, new_in_idx, conn->to(), conn->in_idx()); // new_in_idx == new_out_idx
 			grp->add(int_conn);
 			conn->to(grp, new_in_idx);
 		}
