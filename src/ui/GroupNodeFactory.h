@@ -19,7 +19,11 @@ public:
 	virtual Node * create_new(int x, int y);
 
 	int export_to_file();
+
+	static void scan_exported_files();
 private:
+	GroupNodeFactory(const char * fn);
+
 	pugi::xml_document _xml;
 };
 

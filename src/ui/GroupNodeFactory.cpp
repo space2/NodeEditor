@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 #include <pwd.h>
 #include <errno.h>
+#include <dirent.h>
 
 GroupNodeFactory::GroupNodeFactory(Group * grp)
 	: NodeFactory(kMacroGroup, grp->name())
@@ -21,6 +22,14 @@ GroupNodeFactory::GroupNodeFactory(Group * grp)
 	n.append_attribute("x").set_value(grp->x());
 	n.append_attribute("y").set_value(grp->y());
 	grp->save_to(n);
+}
+
+GroupNodeFactory::GroupNodeFactory(const char * fn)
+	: NodeFactory(kMacroGroup, NULL)
+{
+	if (_xml.load_file(fn).status == pugi::status_ok) {
+		this->type(_xml.first_child().attribute("name").as_string());
+	}
 }
 
 GroupNodeFactory::~GroupNodeFactory()
@@ -71,4 +80,36 @@ int GroupNodeFactory::export_to_file()
 	}
 
 	return 1;
+}
+
+void GroupNodeFactory::scan_exported_files()
+{
+	char fn[1024];
+	struct passwd *pw = getpwuid(getuid());
+	strcpy(fn, pw->pw_dir);
+	strcat(fn, "/.NodeEditor/Macros");
+	DIR * dir = opendir(fn);
+	if (dir) {
+		while (1) {
+			struct dirent * entry = readdir(dir);
+			if (!entry) break;
+			if (entry->d_name[0] == '.') continue;
+
+			// Check if it's an xml file
+			const char * xml_fn = entry->d_name;
+			int l = strlen(xml_fn);
+			if (strcmp(xml_fn + l - 4, ".xml")) continue;
+
+			// Open xml file
+			char full_xml_fn[1024];
+			sprintf(full_xml_fn, "%s/%s", fn, xml_fn);
+			GroupNodeFactory * nf = new GroupNodeFactory(full_xml_fn);
+			if (nf->type()) {
+				register_node_factory(nf);
+			} else {
+				delete nf;
+			}
+		}
+		closedir(dir);
+	}
 }

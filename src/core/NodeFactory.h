@@ -19,6 +19,10 @@ public:
 	const char * type() const { return _type; }
 	int builtin() const { return strcmp(_group, kMacroGroup); }
 	virtual Node * create_new(int x, int y) = 0;
+
+protected:
+	void type(const char * s) { _type = s; }
+
 private:
 	StrPtr _group;
 	StrPtr _type;

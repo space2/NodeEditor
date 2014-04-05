@@ -413,6 +413,7 @@ int main(int argc, const char * argv[])
 	Fl::lock();
 	Fl::scheme("gtk+");
 	ui.make_window();
+	GroupNodeFactory::scan_exported_files();
 	setup_graph();
 	setup_window();
 	ui.window->show();
