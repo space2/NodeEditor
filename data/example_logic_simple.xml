@@ -21,8 +21,28 @@
 		<connection id="3" from="0" out="2" to="3" in="1" />
 		<connection id="4" from="3" out="0" to="1" in="0" />
 	</node>
+	<node id="5" type="NOP" x="24" y="270" input_0="in" output_0="out" />
+	<node id="6" type="NOP" x="162" y="279" input_0="in" output_0="out" />
+	<node id="7" type="NOP" x="22" y="320" input_0="in" output_0="out" />
+	<node id="8" type="NOP" x="163" y="345" input_0="in" output_0="out" />
+	<node id="9" type="NOP" x="26" y="398" input_0="in" output_0="out" />
+	<node id="10" type="NOP" x="201" y="407" input_0="in" output_0="out" />
+	<node id="11" type="NOP" x="23" y="463" input_0="in" output_0="out" />
+	<node id="12" type="NOP" x="251" y="476" input_0="in" output_0="out" />
+	<node id="13" type="NOP" x="340" y="245" input_0="in" output_0="out" />
+	<node id="14" type="NOP" x="336" y="307" input_0="in" output_0="out" />
+	<node id="15" type="NOP" x="330" y="367" input_0="in" output_0="out" />
+	<node id="16" type="NOP" x="396" y="435" input_0="in" output_0="out" />
 	<connection id="0" from="0" out="0" to="4" in="0" />
 	<connection id="1" from="2" out="0" to="4" in="1" />
 	<connection id="2" from="1" out="0" to="4" in="2" />
 	<connection id="3" from="4" out="0" to="3" in="0" />
+	<connection id="4" from="5" out="0" to="6" in="0" />
+	<connection id="5" from="7" out="0" to="8" in="0" />
+	<connection id="6" from="9" out="0" to="10" in="0" />
+	<connection id="7" from="11" out="0" to="12" in="0" />
+	<connection id="8" from="13" out="0" to="14" in="0" />
+	<connection id="9" from="14" out="0" to="13" in="0" />
+	<connection id="10" from="15" out="0" to="16" in="0" />
+	<connection id="11" from="16" out="0" to="15" in="0" />
 </graph>
