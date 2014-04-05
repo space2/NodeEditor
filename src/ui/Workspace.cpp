@@ -608,8 +608,21 @@ void Workspace::cut()
 	redraw();
 }
 
+void Workspace::unselect_unremovable()
+{
+	int cnt = _group->node_count();
+	for (int i = 0; i < cnt; i++) {
+		Node * node = _group->node(i);
+		if (node->selected() && !node->can_be_removed()) {
+			node->selected(0);
+			_sel_count--;
+		}
+	}
+}
+
 void Workspace::copy()
 {
+	unselect_unremovable();
 	if (!_sel_count) {
 		fl_alert("No nodes selected!");
 		return;
@@ -638,7 +651,7 @@ void Workspace::paste()
 	pugi::xml_node root = _clipboard.first_child();
 	pugi::xml_node child = root.first_child();
 	while (!child.empty()) {
-		const char * name = child.attribute("name").as_string();
+		const char * name = child.attribute("type").as_string();
 		int x = child.attribute("x").as_int() + 10;
 		int y = child.attribute("y").as_int() + 10;
 		Node * clone = new_node(name, x, y);
@@ -655,6 +668,7 @@ void Workspace::paste()
 
 void Workspace::duplicate()
 {
+	unselect_unremovable();
 	if (!_sel_count) {
 		fl_alert("No nodes selected!");
 		return;

@@ -24,6 +24,7 @@ public:
 	void parent(Group * parent) { _parent = parent; }
 
 	virtual const char * type() const = 0;
+	virtual int can_be_removed() const { return 1; };
 	virtual Node * clone();
 
 	const char * name() const { return _name.empty() ? type() : _name.get(); }

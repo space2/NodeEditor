@@ -82,6 +82,7 @@ private:
 	void add_connection(Node * from, int out_idx, Node * to, int in_idx);
 	void set_scrollbar_range();
 	void remove(Node * node);
+	void unselect_unremovable();
 
 	int s2gx(int xx) { return xx - x() + _scroll_x; }
 	int s2gy(int yy) { return yy - y() + _scroll_y; }
