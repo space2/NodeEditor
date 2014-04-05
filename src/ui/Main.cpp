@@ -305,13 +305,14 @@ static void cb_tb_export(Fl_Widget * w, void * d)
 			}
 		}
 	}
-	nf = new GroupNodeFactory(_selected_group);
-	register_node_factory(nf);
+	GroupNodeFactory * gnf = new GroupNodeFactory(_selected_group);
+	register_node_factory(gnf);
 	if (update_browser) {
 		ui.node_tree->begin();
-		add_node_factory_to_browser(nf);
+		add_node_factory_to_browser(gnf);
 		ui.node_tree->redraw();
 		ui.node_tree->end();
+		gnf->export_to_file();
 	}
 }
 

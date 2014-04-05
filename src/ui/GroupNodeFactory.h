@@ -17,6 +17,8 @@ public:
 	GroupNodeFactory(Group * grp);
 	virtual ~GroupNodeFactory();
 	virtual Node * create_new(int x, int y);
+
+	int export_to_file();
 private:
 	pugi::xml_document _xml;
 };
