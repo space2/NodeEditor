@@ -748,18 +748,34 @@ void Workspace::group_selected()
 
 	// For every connections which is between a selected and not-selected node,
 	// add a port to the group, and connect it
+	Array<Node*> inport_orig_node, outport_orig_node;
+	Array<int> inport_orig_idx, outport_orig_idx;
+	Array<int> inport_new_idx, outport_new_idx;
 	for (int i = 0; i < _group->connection_count(); i++) {
 		Connection * conn = _group->connection(i);
 		if (conn->from()->selected() && conn->to()->selected()) continue; // Already processed
 		if (conn->from()->selected()) {
+			// Create output port
 			Slot * old_output = conn->from()->output(conn->out_idx());
 			Slot * old_input = conn->to()->input(conn->in_idx());
-			int new_in_idx = grp_outputs->copy_input(old_input);
-			int new_out_idx = grp->copy_output(old_output);
+			int new_in_idx = -1;
+			for (int j = 0; j < outport_orig_node.count(); j++) {
+				if (outport_orig_node[j] == conn->from() && outport_orig_idx[j] == conn->out_idx()) {
+					new_in_idx = outport_new_idx[j];
+				}
+			}
+			if (new_in_idx < 0) {
+				new_in_idx = grp_outputs->copy_input(old_input);
+				/* new_out_idx */ grp->copy_output(old_output);
+				outport_orig_node.add(conn->from());
+				outport_orig_idx.add(conn->out_idx());
+				outport_new_idx.add(new_in_idx);
+			}
 			Connection * int_conn = new Connection(conn->from(), conn->out_idx(), grp_outputs, new_in_idx);
 			grp->add(int_conn);
-			conn->from(grp, new_out_idx);
+			conn->from(grp, new_in_idx); // new_in_idx == new_out_idx
 		} else if (conn->to()->selected()) {
+			// Create input port
 			Slot * old_output = conn->from()->output(conn->out_idx());
 			Slot * old_input = conn->to()->input(conn->in_idx());
 			int new_in_idx = grp_inputs->copy_output(old_output);
