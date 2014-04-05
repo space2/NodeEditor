@@ -9,7 +9,7 @@
 #include "core/NodeFactory.h"
 
 NOP::NOP(int x, int y)
-	: Node(x, y, "NOP")
+	: Node(x, y)
 {
 	add_input(new Slot("in"));
 	add_output(new Slot("out"));

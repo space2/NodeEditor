@@ -9,7 +9,7 @@
 #include "core/NodeFactory.h"
 
 GroupPorts::GroupPorts(int x, int y)
-	: DynamicNode(x, y, "Ports")
+	: DynamicNode(x, y)
 {
 }
 

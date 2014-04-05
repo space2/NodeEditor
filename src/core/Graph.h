@@ -11,11 +11,11 @@
 
 class Graph : public Group {
 public:
-	Graph(const char * name);
+	Graph();
 	virtual ~Graph();
 
-	int save_to(const char * fn);
-	int load_from(const char * fn);
+	int save_to_file(const char * fn);
+	int load_from_file(const char * fn);
 
 	const char * file_name() const { return _file_name; }
 

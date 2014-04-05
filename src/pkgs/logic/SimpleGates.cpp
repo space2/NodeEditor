@@ -9,7 +9,7 @@
 #include "core/NodeFactory.h"
 
 NotGate::NotGate(int x, int y)
-	: Node(x, y, "NotGate")
+	: Node(x, y)
 {
 	add_input(new Slot("in"));
 	add_output(new Slot("out"));
@@ -27,8 +27,8 @@ int NotGate::calc()
 	return out->changed();
 }
 
-DualInputLogicGate::DualInputLogicGate(int x, int y, const char * name)
-	: Node(x, y, name)
+DualInputLogicGate::DualInputLogicGate(int x, int y)
+	: Node(x, y)
 {
 	add_input(new Slot("in0"));
 	add_input(new Slot("in1"));

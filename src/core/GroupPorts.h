@@ -13,5 +13,6 @@ class GroupPorts: public DynamicNode {
 public:
 	GroupPorts(int x, int y);
 	virtual ~GroupPorts();
+	virtual const char * type() const { return "Ports"; }
 };
 

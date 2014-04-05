@@ -52,7 +52,7 @@ static int check_dnd_add()
 }
 
 Workspace::Workspace(int x, int y, int w, int h, const char * l)
-	: Fl_Widget(x, y, w, h, l), _graph(new Graph("Untitled")), _high(NULL),
+	: Fl_Widget(x, y, w, h, l), _graph(new Graph()), _group(_graph), _high(NULL),
 	  _start_x(0), _start_y(0), _end_x(0), _end_y(0), _sel_count(0),
 	  _sel_conn_node(NULL), _sel_conn_idx(-1),
 	  _state(Idle), _scroll_x(0), _scroll_y(0),
@@ -70,6 +70,7 @@ void Workspace::clear()
 {
 	delete _graph;
 	_graph = NULL;
+	_group = NULL;
 }
 
 void Workspace::scrollbars(Fl_Scrollbar * h, Fl_Scrollbar * v)
@@ -99,7 +100,7 @@ void Workspace::set_scrollbar_range()
 {
 	if (!_graph || !_scr_h || !_scr_v) return;
 	int minx, miny, maxx, maxy;
-	_graph->calc_range(minx, miny, maxx, maxy);
+	_group->calc_range(minx, miny, maxx, maxy);
 	_scr_h->value(_scroll_x, w(), minx, maxx - minx);
 	_scr_v->value(_scroll_y, h(), miny, maxy - miny);
 }
@@ -109,6 +110,7 @@ void Workspace::graph(Graph * graph)
 {
 	clear();
 	_graph = graph;
+	_group = graph;
 	set_scrollbar_range();
 	_sel_count = 0;
 	if (_cb) _cb(NodeSelected, NULL);
@@ -279,8 +281,8 @@ int Workspace::handle(int event)
 
 void Workspace::drag_selected(int dx, int dy)
 {
-	for (int i = 0; i < _graph->node_count(); i++) {
-		Node * node = _graph->node(i);
+	for (int i = 0; i < _group->node_count(); i++) {
+		Node * node = _group->node(i);
 		if (node->selected()) {
 			node->move(dx, dy);
 		}
@@ -290,8 +292,8 @@ void Workspace::drag_selected(int dx, int dy)
 
 Node * Workspace::find_node_below(int x, int y)
 {
-	for (int i = _graph->node_count()-1; i >= 0; i--) {
-		Node * node = _graph->node(i);
+	for (int i = _group->node_count()-1; i >= 0; i--) {
+		Node * node = _group->node(i);
 		if (node->inside(x, y)) {
 			return node;
 		}
@@ -350,8 +352,8 @@ void Workspace::draw_connection(int x0, int y0, int x1, int y1, int col0, int co
 
 void Workspace::draw_nodes()
 {
-	for (int i = 0; i < _graph->node_count(); i++) {
-		draw_node(_graph->node(i), g2sx(0), g2sy(0));
+	for (int i = 0; i < _group->node_count(); i++) {
+		draw_node(_group->node(i), g2sx(0), g2sy(0));
 	}
 }
 
@@ -426,8 +428,8 @@ void Workspace::draw_node(Node * node, int dx, int dy)
 
 void Workspace::draw_connections()
 {
-	for (int i = 0; i < _graph->connection_count(); i++) {
-		Connection * conn = _graph->connection(i);
+	for (int i = 0; i < _group->connection_count(); i++) {
+		Connection * conn = _group->connection(i);
 		int x0 = conn->from()->output_x(conn->out_idx());
 		int y0 = conn->from()->output_y(conn->out_idx());
 		int x1 = conn->to()->input_x(conn->in_idx());
@@ -464,8 +466,8 @@ void Workspace::select_node(Node * node, int toggle)
 		redraw();
 	} else {
 		if (node->selected()) return; // NOP
-		for (int i = 0; i < _graph->node_count(); i++) {
-			_graph->node(i)->selected(0);
+		for (int i = 0; i < _group->node_count(); i++) {
+			_group->node(i)->selected(0);
 		}
 		node->selected(1);
 		_sel_count = 1;
@@ -481,8 +483,8 @@ void Workspace::select_nodes_in_rect(int x0, int y0, int x1, int y1, SelectOp op
 	if (op == SelectSet) {
 		unselect_all();
 	}
-	for (int i = 0; i < _graph->node_count(); i++) {
-		Node * n = _graph->node(i);
+	for (int i = 0; i < _group->node_count(); i++) {
+		Node * n = _group->node(i);
 		if (n->x() > x1) continue;
 		if (n->y() > y1) continue;
 		if (n->x() + n->w() < x0) continue;
@@ -505,18 +507,18 @@ void Workspace::select_nodes_in_rect(int x0, int y0, int x1, int y1, SelectOp op
 
 void Workspace::select_all()
 {
-	for (int i = 0; i < _graph->node_count(); i++) {
-		_graph->node(i)->selected(1);
+	for (int i = 0; i < _group->node_count(); i++) {
+		_group->node(i)->selected(1);
 	}
-	_sel_count = _graph->node_count();
+	_sel_count = _group->node_count();
 	if (_cb) _cb(NodeSelected, NULL);
 	redraw();
 }
 
 void Workspace::unselect_all()
 {
-	for (int i = 0; i < _graph->node_count(); i++) {
-		_graph->node(i)->selected(0);
+	for (int i = 0; i < _group->node_count(); i++) {
+		_group->node(i)->selected(0);
 	}
 	_sel_count = 0;
 	if (_cb) _cb(NodeSelected, NULL);
@@ -525,10 +527,10 @@ void Workspace::unselect_all()
 
 Connection * Workspace::find_connection_to(const Node * node, int in_idx)
 {
-	for (int i = 0; i < _graph->connection_count(); i++) {
-		Connection * conn = _graph->connection(i);
+	for (int i = 0; i < _group->connection_count(); i++) {
+		Connection * conn = _group->connection(i);
 		if (conn->to() == node && conn->in_idx() == in_idx) {
-			return _graph->connection(i);
+			return _group->connection(i);
 		}
 	}
 	return NULL;
@@ -536,10 +538,10 @@ Connection * Workspace::find_connection_to(const Node * node, int in_idx)
 
 Connection * Workspace::find_connection_from(const Node * node, int out_idx)
 {
-	for (int i = 0; i < _graph->connection_count(); i++) {
-		Connection * conn = _graph->connection(i);
+	for (int i = 0; i < _group->connection_count(); i++) {
+		Connection * conn = _group->connection(i);
 		if (conn->from() == node && conn->out_idx() == out_idx) {
-			return _graph->connection(i);
+			return _group->connection(i);
 		}
 	}
 	return NULL;
@@ -555,7 +557,7 @@ void Workspace::start_connection_drag(Node * node, int idx, State state)
 
 void Workspace::delete_connection(Connection * conn)
 {
-	_graph->remove(conn);
+	_group->remove(conn);
 	redraw();
 }
 
@@ -569,19 +571,19 @@ void Workspace::add_connection(Node * from, int out_idx, Node * to, int in_idx)
 
 	// Add new connection
 	Connection * conn = new Connection(from, out_idx, to, in_idx);
-	_graph->add(conn);
+	_group->add(conn);
 	redraw();
 }
 
-void Workspace::add_node(const char * name, int x, int y)
+void Workspace::add_node(const char * type, int x, int y)
 {
-	Node * node = new_node(name, x, y);
+	Node * node = new_node(type, x, y);
 	if (!node) {
 		fl_alert("Internal error: cannot create node!");
 		return;
 	}
-	_graph->add(node);
-	_graph->calc();
+	_group->add(node);
+	_group->calc();
 	redraw();
 }
 
@@ -589,9 +591,9 @@ void Workspace::cut()
 {
 	copy();
 	if (!_sel_count) return;
-	for (int i = _graph->node_count()-1; i >= 0; i--) {
-		if (!_graph->node(i)->selected()) continue;
-		remove(_graph->node(i));
+	for (int i = _group->node_count()-1; i >= 0; i--) {
+		if (!_group->node(i)->selected()) continue;
+		remove(_group->node(i));
 	}
 	_sel_count = 0;
 	_graph->calc();
@@ -607,12 +609,12 @@ void Workspace::copy()
 	}
 	_clipboard.reset();
 	pugi::xml_node root = _clipboard.append_child("clipboard");
-	int cnt = _graph->node_count();
+	int cnt = _group->node_count();
 	for (int i = 0; i < cnt; i++) {
-		if (!_graph->node(i)->selected()) continue;
-		Node * old = _graph->node(i);
+		if (!_group->node(i)->selected()) continue;
+		Node * old = _group->node(i);
 		pugi::xml_node n = root.append_child("node");
-		n.append_attribute("name").set_value(old->name());
+		n.append_attribute("type").set_value(old->type());
 		n.append_attribute("x").set_value(old->x());
 		n.append_attribute("y").set_value(old->y());
 		old->save_to(n);
@@ -634,12 +636,12 @@ void Workspace::paste()
 		int y = child.attribute("y").as_int() + 10;
 		Node * clone = new_node(name, x, y);
 		clone->load_from(child);
-		_graph->add(clone);
+		_group->add(clone);
 		clone->selected(1);
 		_sel_count++;
 		child = child.next_sibling();
 	}
-	_graph->calc();
+	_group->calc();
 	if (_cb) _cb(NodeSelected, NULL);
 	redraw();
 }
@@ -650,26 +652,26 @@ void Workspace::duplicate()
 		fl_alert("No nodes selected!");
 		return;
 	}
-	int cnt = _graph->node_count();
+	int cnt = _group->node_count();
 	for (int i = 0; i < cnt; i++) {
-		if (!_graph->node(i)->selected()) continue;
-		Node * old = _graph->node(i);
-		Node * clone = new_node(old->name(), old->x() + 10, old->y() + 10);
+		if (!_group->node(i)->selected()) continue;
+		Node * old = _group->node(i);
+		Node * clone = old->clone();
 		if (!clone) continue; // Maybe we should log this?
 		pugi::xml_node tmp;
 		old->save_to(tmp);
 		clone->load_from(tmp);
-		_graph->add(clone);
-		_graph->node(i)->selected(0);
+		_group->add(clone);
+		_group->node(i)->selected(0);
 		clone->selected(1);
 	}
-	_graph->calc();
+	_group->calc();
 	redraw();
 }
 
 void Workspace::remove(Node * node)
 {
-	_graph->remove(node);
+	_group->remove(node);
 }
 
 void Workspace::group()
@@ -681,8 +683,8 @@ void Workspace::group()
 
 	// Calculate bounding box of selected nodes
 	int min_x = 0, min_y = 0, max_x = 0, max_y = 0;
-	for (int i = 0; i < _graph->node_count(); i++) {
-		Node * node = _graph->node(i);
+	for (int i = 0; i < _group->node_count(); i++) {
+		Node * node = _group->node(i);
 		if (!node->selected()) continue;
 		min_x = Util::min(min_x, node->x());
 		min_y = Util::min(min_y, node->y());
@@ -691,28 +693,27 @@ void Workspace::group()
 	}
 
 	// Create group node and add to graph
-	Group * grp = new Group("Group");
-	GroupNode * grp_node = new GroupNode((min_x + max_x) / 2, (min_y + max_y) / 2, grp);
-	_graph->add(grp_node);
+	Group * grp = new Group((min_x + max_x) / 2, (min_y + max_y) / 2);
+	_group->add(grp);
 	GroupPorts * grp_inputs = new GroupPorts(min_x, (min_y + max_y) / 2);
-	grp_node->inports(grp_inputs);
+	grp->add_inports(grp_inputs);
 	GroupPorts * grp_outputs = new GroupPorts(max_x, (min_y + max_y) / 2);
-	grp_node->outports(grp_outputs);
+	grp->add_outports(grp_outputs);
 
 	// Copy selected nodes to new group node
 	Array<Node*> nodes_to_delete;
-	int cnt = _graph->node_count();
+	int cnt = _group->node_count();
 	for (int i = 0; i < cnt; i++) {
-		if (!_graph->node(i)->selected()) continue;
-		Node * node = _graph->node(i);
+		if (!_group->node(i)->selected()) continue;
+		Node * node = _group->node(i);
 		grp->add(node);
 		nodes_to_delete.add(node);
 	}
 
 	// Copy connections which are completely in the selection
 	Array<Connection*> conns_to_delete;
-	for (int i = 0; i < _graph->connection_count(); i++) {
-		Connection * conn = _graph->connection(i);
+	for (int i = 0; i < _group->connection_count(); i++) {
+		Connection * conn = _group->connection(i);
 		if (conn->from()->selected() && conn->to()->selected()) {
 			grp->add(conn);
 			conns_to_delete.add(conn);
@@ -721,34 +722,34 @@ void Workspace::group()
 
 	// For every connections which is between a selected and not-selected node,
 	// add a port to the group, and connect it
-	for (int i = 0; i < _graph->connection_count(); i++) {
-		Connection * conn = _graph->connection(i);
+	for (int i = 0; i < _group->connection_count(); i++) {
+		Connection * conn = _group->connection(i);
 		if (conn->from()->selected() && conn->to()->selected()) continue; // Already processed
 		if (conn->from()->selected()) {
 			Slot * old_output = conn->from()->output(conn->out_idx());
 			Slot * old_input = conn->to()->input(conn->in_idx());
 			int new_in_idx = grp_outputs->copy_input(old_input);
-			int new_out_idx = grp_node->copy_output(old_output);
+			int new_out_idx = grp->copy_output(old_output);
 			Connection * int_conn = new Connection(conn->from(), conn->out_idx(), grp_outputs, new_in_idx);
 			grp->add(int_conn);
-			conn->from(grp_node, new_out_idx);
+			conn->from(grp, new_out_idx);
 		} else if (conn->to()->selected()) {
 			Slot * old_output = conn->from()->output(conn->out_idx());
 			Slot * old_input = conn->to()->input(conn->in_idx());
 			int new_in_idx = grp_inputs->copy_output(old_output);
-			int new_out_idx = grp_node->copy_input(old_input);
+			int new_out_idx = grp->copy_input(old_input);
 			Connection * int_conn = new Connection(grp_inputs, new_out_idx, conn->to(), conn->in_idx());
 			grp->add(int_conn);
-			conn->to(grp_node, new_in_idx);
+			conn->to(grp, new_in_idx);
 		}
 	}
 
 	// Cleanup
 	for (int i = 0; i < nodes_to_delete.count(); i++) {
-		_graph->remove(nodes_to_delete[i], 1);
+		_group->remove(nodes_to_delete[i], 1);
 	}
 	for (int i = 0; i < conns_to_delete.count(); i++) {
-		_graph->remove(conns_to_delete[i], 1);
+		_group->remove(conns_to_delete[i], 1);
 	}
 
 	// Recalculate network

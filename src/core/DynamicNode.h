@@ -9,9 +9,9 @@
 
 #include "core/Node.h"
 
-class DynamicNode: public Node {
+class DynamicNode : public Node {
 public:
-	DynamicNode(int x, int y, const char * name);
+	DynamicNode(int x, int y);
 	virtual ~DynamicNode();
 
 	int copy_output(Slot * slot);

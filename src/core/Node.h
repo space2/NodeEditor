@@ -11,13 +11,26 @@
 
 #include "Array.h"
 #include "Slot.h"
+#include "StrPtr.h"
+
+class Group;
 
 class Node {
 public:
-	Node(int x, int y, const char * name);
+	Node(int x, int y);
 	virtual ~Node();
 
-	const char * name() const { return _name; }
+	Group * parent() { return _parent; }
+	void parent(Group * parent) { _parent = parent; }
+
+	virtual const char * type() const = 0;
+	virtual Node * clone();
+
+	const char * name() const { return _name.empty() ? type() : _name.get(); }
+	void name(const char * s) { _name = s; }
+
+	int is_dirty() const { return _dirty; }
+	virtual void dirty(int v);
 
 	int input_count() const { return _inputs.count(); }
 	Slot * input(int idx) { return _inputs[idx]; }
@@ -67,7 +80,8 @@ protected:
 
 private:
 	int _x, _y;
-	const char * _name;
-	int _sel;
+	StrPtr _name;
+	int _sel, _dirty;
+	Group * _parent;
 };
 

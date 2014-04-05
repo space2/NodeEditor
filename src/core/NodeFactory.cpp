@@ -11,26 +11,26 @@
 typedef Node* (*new_node_func)(int x, int y);
 
 static Array<const char *> * groups = NULL;
-static Array<const char *> * names = NULL;
+static Array<const char *> * types = NULL;
 static Array<new_node_func> * funcs = NULL;
 
 void register_node(const char * group, const char * name, Node* (*new_fn)(int x, int y))
 {
-	if (!groups || !names || !funcs) {
+	if (!groups || !types || !funcs) {
 		groups = new Array<const char *>();
-		names = new Array<const char *>();
+		types = new Array<const char *>();
 		funcs = new Array<new_node_func>();
 	}
 	groups->add(group);
-	names->add(name);
+	types->add(name);
 	funcs->add(new_fn);
 }
 
-Node * new_node(const char * name, int x, int y)
+Node * new_node(const char * type, int x, int y)
 {
-	if (!groups || !names || !funcs) return NULL;
+	if (!groups || !types || !funcs) return NULL;
 	for (int i = 0; i < funcs->count(); i++) {
-		if (0 == strcmp(names->get(i), name)) {
+		if (0 == strcmp(types->get(i), type)) {
 			return funcs->get(i)(x, y);
 		}
 	}
@@ -39,19 +39,19 @@ Node * new_node(const char * name, int x, int y)
 
 int node_count()
 {
-	if (!groups || !names || !funcs) return 0;
-	return names->count();
+	if (!groups || !types || !funcs) return 0;
+	return types->count();
 }
 
 const char * node_group(int idx)
 {
-	if (!groups || !names || !funcs) return NULL;
+	if (!groups || !types || !funcs) return NULL;
 	return groups->get(idx);
 }
 
 const char * node_name(int idx)
 {
-	if (!groups || !names || !funcs) return NULL;
-	return names->get(idx);
+	if (!groups || !types || !funcs) return NULL;
+	return types->get(idx);
 }
 

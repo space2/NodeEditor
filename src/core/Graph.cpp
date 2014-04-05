@@ -13,8 +13,8 @@
 #include "Util.h"
 #include "NodeFactory.h"
 
-Graph::Graph(const char * name)
-	: Group(name), _file_name(NULL)
+Graph::Graph()
+	: Group(0, 0), _file_name(NULL)
 {
 }
 
@@ -29,7 +29,7 @@ void Graph::file_name(const char * fn)
 	_file_name = strdup(fn);
 }
 
-int Graph::save_to(const char * fn)
+int Graph::save_to_file(const char * fn)
 {
 	pugi::xml_document doc;
 	pugi::xml_node root = doc.append_child("graph");
@@ -42,7 +42,7 @@ int Graph::save_to(const char * fn)
 	return 1;
 }
 
-int Graph::load_from(const char * fn)
+int Graph::load_from_file(const char * fn)
 {
 	pugi::xml_document doc;
 	pugi::xml_parse_result ret = doc.load_file(fn);

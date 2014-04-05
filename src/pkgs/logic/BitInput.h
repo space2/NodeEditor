@@ -14,6 +14,8 @@ public:
 	BitInput(int x, int y);
 	virtual ~BitInput();
 
+	virtual const char * type() const { return "BitInput"; }
+
 	virtual int save_to(pugi::xml_node & node);
 	virtual int load_from(pugi::xml_node & node);
 

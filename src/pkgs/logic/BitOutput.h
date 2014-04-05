@@ -13,6 +13,7 @@ class BitOutput: public Node {
 public:
 	BitOutput(int x, int y);
 	virtual ~BitOutput();
+	virtual const char * type() const { return "BitOutput"; }
 	virtual const Slot * show_slot() const { return _inputs[0]; }
 };
 

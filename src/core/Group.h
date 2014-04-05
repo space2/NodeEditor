@@ -10,14 +10,17 @@
 #include "Node.h"
 #include "Connection.h"
 #include "Array.h"
+#include "GroupPorts.h"
+#include "DynamicNode.h"
 
-class Group {
+class Group : public DynamicNode {
 public:
-	Group(const char * name);
+	Group(int x, int y);
 	virtual ~Group();
 
-	int dirty() const { return _dirty; }
-	void dirty(int v) { _dirty = v; }
+	virtual const char * type() const { return "Group"; }
+
+	virtual void dirty(int v);
 
 	void add(Node * node);
 	int node_count() const { return _nodes.count(); }
@@ -29,20 +32,27 @@ public:
 	int connection_count() const { return _conns.count(); }
 	Connection * connection(int idx) { return _conns[idx]; }
 	const Connection * connection(int idx) const { return _conns[idx]; }
-	void remove(Connection * conn, int keep = 0) { _conns.remove(conn, keep); _dirty = 1; }
+	void remove(Connection * conn, int keep = 0);
 
-	int save_to(pugi::xml_node & root);
-	int load_from(pugi::xml_node & root);
+	virtual int save_to(pugi::xml_node & node);
+	virtual int load_from(pugi::xml_node & node);
 
 	void calc_range(int & min_x, int & min_y, int & max_x, int & max_y);
 
-	void calc();
+	void add_inports(GroupPorts * ports);
+	void add_outports(GroupPorts * ports);
+
+	virtual int calc();
+
 private:
 	void clear();
+	void calc_children();
+	int save_children_to(pugi::xml_node & node);
+	int load_children_from(pugi::xml_node & node);
 
-	char * _name;
 	ArrayO<Node*> _nodes;
 	ArrayO<Connection*> _conns;
-	int _dirty;
+	GroupPorts * _inports;
+	GroupPorts * _outports;
 };
 

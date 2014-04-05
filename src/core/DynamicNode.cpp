@@ -7,8 +7,8 @@
 
 #include "core/DynamicNode.h"
 
-DynamicNode::DynamicNode(int x, int y, const char * name)
-	: Node(x, y, name)
+DynamicNode::DynamicNode(int x, int y)
+	: Node(x, y)
 {
 }
 

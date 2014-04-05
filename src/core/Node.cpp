@@ -6,6 +6,8 @@
  */
 
 #include "Node.h"
+#include "Group.h"
+#include "NodeFactory.h"
 
 static const int kNodeWidth = 100;
 static const int kNodeBorder = 5;
@@ -13,13 +15,28 @@ static const int kNodeHeader = 10;
 static const int kNodeSlotSize = 10;
 static const int kSlotAreaWidth = 30;
 
-Node::Node(int x, int y, const char * name)
-	: _x(x), _y(y), _name(name), _sel(0)
+Node::Node(int x, int y)
+	: _x(x), _y(y), _name(NULL), _sel(0), _dirty(0), _parent(NULL)
 {
 }
 
 Node::~Node()
 {
+}
+
+Node * Node::clone()
+{
+	Node * ret = new_node(type(), x() + 10, y() + 10);
+	ret->name(_name);
+	return ret;
+}
+
+void Node::dirty(int v) {
+	_dirty = v;
+	if (v) {
+		// Notify the parent
+		if (_parent) _parent->dirty(v);
+	}
 }
 
 int Node::w() const
@@ -95,6 +112,9 @@ int Node::is_edit_area(int x, int y)
 
 int Node::save_to(pugi::xml_node & node)
 {
+	// Save node name
+	if (!_name.empty()) node.append_attribute("name").set_value(_name);
+
 	// Save input/output names, since they might have changes
 	char buff[32];
 	for (int i = 0; i < input_count(); i++) {
@@ -110,6 +130,10 @@ int Node::save_to(pugi::xml_node & node)
 
 int Node::load_from(pugi::xml_node & node)
 {
+	// Load node name
+	const char * name = node.attribute("name").as_string();
+	if (name && name[0]) _name = name;
+
 	// Load input/output names, since they might have changes
 	char buff[32];
 	for (int i = 0; i < input_count(); i++) {
@@ -139,6 +163,7 @@ int Node::edit()
 	if (slot->type() == Slot::Bit) {
 		// Toggle bit
 		slot->set_bit(!slot->as_bit());
+		dirty(1);
 		return 1;
 	}
 	return 0;

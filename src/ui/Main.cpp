@@ -78,7 +78,7 @@ static void update_window_title()
 static void cb_win_open(Fl_Widget * w, void * d)
 {
 	// Confirm first
-	if (ui.workspace->graph()->dirty()) {
+	if (ui.workspace->graph()->is_dirty()) {
 		int ret = fl_choice("Are you sure you want to open a new file?\nThere are unsaved changes which will be lost!", "Cancel", "Yes", NULL);
 		if (!ret) return;
 	}
@@ -90,8 +90,8 @@ static void cb_win_open(Fl_Widget * w, void * d)
 	if (file_chooser.show() == 0) {
 		const char * fn = file_chooser.filename();
 		if (fn) {
-			Graph * graph = new Graph("Untitled");
-			if (graph->load_from(fn)) {
+			Graph * graph = new Graph();
+			if (graph->load_from_file(fn)) {
 				ui.workspace->graph(graph);
 				update_window_title();
 			}
@@ -108,7 +108,7 @@ static void cb_win_save_as(Fl_Widget * w = NULL, void * d = NULL)
 	if (file_chooser.show() == 0) {
 		const char * fn = file_chooser.filename();
 		if (fn) {
-			ui.workspace->graph()->save_to(fn);
+			ui.workspace->graph()->save_to_file(fn);
 			update_window_title();
 		}
 	}
@@ -119,7 +119,7 @@ static void cb_win_save(Fl_Widget * w = NULL, void * d = NULL)
 	Graph * graph = ui.workspace->graph();
 	const char * fn = graph->file_name();
 	if (fn) {
-		graph->save_to(fn);
+		graph->save_to_file(fn);
 	} else {
 		cb_win_save_as();
 	}
@@ -127,7 +127,7 @@ static void cb_win_save(Fl_Widget * w = NULL, void * d = NULL)
 
 static void cb_win_close(Fl_Widget * w, void * d)
 {
-	if (ui.workspace->graph()->dirty()) {
+	if (ui.workspace->graph()->is_dirty()) {
 		int ret = fl_choice("Are you sure you want to exit?\nThere are unsaved changes which will be lost!", "Cancel", "Yes", NULL);
 		if (!ret) return;
 	}
@@ -183,10 +183,10 @@ static void cb_workspace(Workspace::CallbackEvent event, Node * param)
 
 static void setup_graph()
 {
-	Graph * graph = new Graph("Simple");
+	Graph * graph = new Graph();
 
 #if 1
-	graph->load_from("data/example_logic_simple.xml");
+	graph->load_from_file("data/example_logic_simple.xml");
 #else
 	BitInput * inp1 = new BitInput(10, 10);
 	BitInput * inp2 = new BitInput(10, 100);

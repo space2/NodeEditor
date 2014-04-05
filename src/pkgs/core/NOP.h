@@ -14,6 +14,7 @@ public:
 	NOP(int x, int y);
 	virtual ~NOP();
 
+	virtual const char * type() const { return "NOP"; }
 	virtual int calc();
 };
 

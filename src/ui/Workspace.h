@@ -90,6 +90,7 @@ private:
 	static void cb_scroll_y(Fl_Widget * w, void * d);
 
 	Graph * _graph;
+	Group * _group;
 	Node * _high;
 	int _start_x, _start_y, _end_x, _end_y, _sel_count;
 	Node * _sel_conn_node;
