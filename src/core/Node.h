@@ -28,7 +28,7 @@ public:
 	virtual Node * clone();
 
 	const char * name() const { return _name.empty() ? type() : _name.get(); }
-	void name(const char * s) { _name = s; }
+	void name(const char * s) { _name = s; dirty(1); }
 
 	int is_dirty() const { return _dirty; }
 	virtual void dirty(int v);

@@ -27,6 +27,16 @@ static void cb_port_name_changed(Fl_Widget * w, void * data)
 	Slot * slot = (Slot *)data;
 	Fl_Input * input = (Fl_Input *) w;
 	slot->name(input->value());
+	selected_node->dirty(1);
+	ui.workspace->redraw();
+}
+
+static void cb_gate_name_changed(Fl_Widget * w, void * data)
+{
+	Fl_Input * input = (Fl_Input *) w;
+	const char * name = input->value();
+	if (name && !name[0]) name = NULL; // Optimize away empty string as null
+	selected_node->name(name);
 	ui.workspace->redraw();
 }
 
@@ -49,16 +59,26 @@ static void show_properties(Node * node)
 	ui.properties->begin();
 	int x = ui.properties->x() + 2; // Gap due to box
 	int y = ui.properties->y() + 2; // Gap due to box
+
+	// Add node name
+	Fl_Input * value_w = new Fl_Input(x + kPropertyLabelWidth, y, kPropertyValueWidth, kPropertyHeight, "Name");
+	value_w->callback(cb_gate_name_changed, node);
+	value_w->when(FL_WHEN_ENTER_KEY_CHANGED);
+	value_w->value(node->name());
+	y += kPropertyHeight;
+
 	// Add input names
 	for (int i = 0; i < node->input_count(); i++) {
 		add_gate_name_property(x, y, "Input", i+1, node->input(i));
 		y += kPropertyHeight;
 	}
+
 	// Add output names
 	for (int i = 0; i < node->output_count(); i++) {
 		add_gate_name_property(x, y, "Output", i+1, node->output(i));
 		y += kPropertyHeight;
 	}
+
 	ui.properties->end();
 	ui.properties->redraw();
 }
