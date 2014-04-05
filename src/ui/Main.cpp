@@ -43,7 +43,7 @@ static void cb_gate_name_changed(Fl_Widget * w, void * data)
 static void add_gate_name_property(int x, int y, const char * prefix, int idx, Slot * slot)
 {
 	char label[32];
-	sprintf(label, "Input#%d", idx);
+	sprintf(label, "%s#%d", prefix, idx);
 	Fl_Input * value_w = new Fl_Input(x + kPropertyLabelWidth, y, kPropertyValueWidth, kPropertyHeight);
 	value_w->callback(cb_port_name_changed, slot);
 	value_w->when(FL_WHEN_ENTER_KEY_CHANGED);

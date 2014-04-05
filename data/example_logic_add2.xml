@@ -1,42 +1,46 @@
 <?xml version="1.0"?>
-<graph>
-	<node id="0" type="BitInput" x="16" y="65">
+<graph nr_inputs="0" nr_outputs="0">
+	<node id="0" type="BitInput" x="16" y="65" output_0="out">
 		<val type="bit" value="1" />
 	</node>
-	<node id="1" type="BitInput" x="16" y="266">
+	<node id="1" type="BitInput" x="16" y="266" output_0="out">
 		<val type="bit" value="1" />
 	</node>
-	<node id="2" type="And" x="256" y="244" />
-	<node id="3" type="BitOutput" x="681" y="154" />
-	<node id="4" type="BitOutput" x="682" y="115" />
-	<node id="5" type="Xor" x="263" y="301" />
-	<node id="6" type="BitInput" x="14" y="210">
+	<node id="2" type="And" x="428" y="332" input_0="in0" input_1="in1" output_0="high_bit" />
+	<node id="3" type="BitOutput" x="681" y="154" input_0="in" />
+	<node id="4" type="BitOutput" x="682" y="115" input_0="in" />
+	<node id="5" type="Xor" x="435" y="389" input_0="in0" input_1="in1" output_0="low_bit" />
+	<node id="6" type="BitInput" x="14" y="210" output_0="out">
 		<val type="bit" value="1" />
 	</node>
-	<node id="7" type="BitInput" x="15" y="18">
+	<node id="7" type="BitInput" x="15" y="18" output_0="out">
 		<val type="bit" value="1" />
 	</node>
-	<node id="8" type="BitOutput" x="680" y="193" />
-	<node id="9" type="And" x="258" y="37" />
-	<node id="10" type="Xor" x="250" y="88" />
-	<node id="11" type="And" x="464" y="132" />
-	<node id="12" type="Xor" x="464" y="185" />
-	<node id="13" type="Or" x="533" y="48" />
-	<connection id="0" from="1" out="0" to="2" in="1" />
-	<connection id="1" from="0" out="0" to="2" in="0" />
-	<connection id="2" from="1" out="0" to="5" in="1" />
-	<connection id="3" from="0" out="0" to="5" in="0" />
-	<connection id="4" from="5" out="0" to="8" in="0" />
-	<connection id="5" from="6" out="0" to="10" in="1" />
-	<connection id="6" from="7" out="0" to="10" in="0" />
-	<connection id="7" from="7" out="0" to="9" in="0" />
-	<connection id="8" from="10" out="0" to="12" in="0" />
-	<connection id="9" from="2" out="0" to="12" in="1" />
-	<connection id="10" from="2" out="0" to="11" in="1" />
-	<connection id="11" from="10" out="0" to="11" in="0" />
-	<connection id="12" from="9" out="0" to="13" in="0" />
-	<connection id="13" from="11" out="0" to="13" in="1" />
-	<connection id="14" from="12" out="0" to="3" in="0" />
-	<connection id="15" from="13" out="0" to="4" in="0" />
-	<connection id="16" from="6" out="0" to="9" in="1" />
+	<node id="8" type="BitOutput" x="680" y="193" input_0="in" />
+	<node id="9" type="And" x="258" y="37" input_0="in0" input_1="in1" output_0="out" />
+	<node id="10" type="Xor" x="250" y="88" input_0="in0" input_1="in1" output_0="out" />
+	<node id="11" type="And" x="464" y="132" input_0="in0" input_1="in1" output_0="out" />
+	<node id="12" type="Xor" x="464" y="185" input_0="in0" input_1="in1" output_0="out" />
+	<node id="13" type="Or" x="533" y="48" input_0="in0" input_1="in1" output_0="out" />
+	<node id="14" type="NOP" x="266" y="336" name="input_1" input_0="in" output_0="out" />
+	<node id="15" type="NOP" x="266" y="392" name="input_2" input_0="in" output_0="out" />
+	<connection id="0" from="5" out="0" to="8" in="0" />
+	<connection id="1" from="6" out="0" to="10" in="1" />
+	<connection id="2" from="7" out="0" to="10" in="0" />
+	<connection id="3" from="7" out="0" to="9" in="0" />
+	<connection id="4" from="10" out="0" to="12" in="0" />
+	<connection id="5" from="2" out="0" to="12" in="1" />
+	<connection id="6" from="2" out="0" to="11" in="1" />
+	<connection id="7" from="10" out="0" to="11" in="0" />
+	<connection id="8" from="9" out="0" to="13" in="0" />
+	<connection id="9" from="11" out="0" to="13" in="1" />
+	<connection id="10" from="12" out="0" to="3" in="0" />
+	<connection id="11" from="13" out="0" to="4" in="0" />
+	<connection id="12" from="6" out="0" to="9" in="1" />
+	<connection id="13" from="1" out="0" to="15" in="0" />
+	<connection id="14" from="0" out="0" to="14" in="0" />
+	<connection id="15" from="14" out="0" to="2" in="0" />
+	<connection id="16" from="15" out="0" to="2" in="1" />
+	<connection id="17" from="14" out="0" to="5" in="0" />
+	<connection id="18" from="15" out="0" to="5" in="1" />
 </graph>
