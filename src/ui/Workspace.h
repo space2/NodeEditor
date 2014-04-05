@@ -41,6 +41,8 @@ public:
 	void group_selected();
 	void ungroup_selected();
 
+	int swap_slots(Node * node, int output, int idx0, int idx1);
+
 	void listener(void (*cb)(CallbackEvent event, Node * param)) { _cb = cb; }
 protected:
 	void draw();

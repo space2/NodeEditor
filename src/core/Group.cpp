@@ -266,4 +266,39 @@ int Group::calc()
 	return 1;
 }
 
+int Group::swap_slots(int output, int idx0, int idx1)
+{
+	if (!Node::swap_slots(output, idx0, idx1)) return 0;
+	if (output && _outports) {
+		_outports->swap_slots(!output, idx0, idx1);
+		swap_slots(_outports, !output, idx0, idx1);
+	}
+	if (!output && _inports) {
+		_inports->swap_slots(!output, idx0, idx1);
+		swap_slots(_inports, !output, idx0, idx1);
+	}
+	return 1;
+}
+
+int Group::swap_slots(Node * node, int output, int idx0, int idx1)
+{
+	for (int i = 0; i < _conns.count(); i++) {
+		Connection * conn = _conns[i];
+		if (output && conn->from() == node) {
+			if (conn->out_idx() == idx0) {
+				conn->from(node, idx1);
+			} else if (conn->out_idx() == idx1) {
+				conn->from(node, idx0);
+			}
+		} else if (!output && conn->to() == node) {
+			if (conn->in_idx() == idx0) {
+				conn->to(node, idx1);
+			} else if (conn->in_idx() == idx1) {
+				conn->to(node, idx0);
+			}
+		}
+	}
+	return 1;
+}
+
 REGISTER_NODE(_,Group,Group);

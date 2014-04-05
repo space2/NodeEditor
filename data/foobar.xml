@@ -1,16 +1,210 @@
 <?xml version="1.0"?>
-<graph>
-	<node id="0" type="BitInput" x="10" y="10" val="0" />
-	<node id="1" type="BitInput" x="10" y="100" val="0" />
-	<node id="2" type="BitInput" x="10" y="190" val="0" />
-	<node id="3" type="And" x="200" y="100" />
-	<node id="4" type="And" x="300" y="200" />
-	<node id="5" type="BitOutput" x="490" y="200" />
-	<node id="6" type="And" x="128" y="342" />
-	<node id="7" type="And" x="277" y="340" />
-	<connection id="0" from="0" out="0" to="3" in="0" />
-	<connection id="1" from="1" out="0" to="3" in="1" />
-	<connection id="2" from="3" out="0" to="4" in="0" />
-	<connection id="3" from="2" out="0" to="4" in="1" />
-	<connection id="4" from="4" out="0" to="5" in="0" />
+<graph nr_inputs="0" nr_outputs="0">
+	<node id="0" type="BitInput" x="80" y="147" name="A-high" output_0="out">
+		<val type="bit" value="0" />
+	</node>
+	<node id="1" type="BitInput" x="82" y="406" name="B-high" output_0="out">
+		<val type="bit" value="0" />
+	</node>
+	<node id="2" type="BitOutput" x="610" y="221" name="Carry" input_0="in" />
+	<node id="3" type="BitOutput" x="615" y="375" name="Result-high" input_0="in" />
+	<node id="4" type="Group" x="337" y="365" name="ADC" input_0="in0" input_1="in1" input_2="carry" output_0="carry" output_1="result" nr_inputs="3" nr_outputs="2" inports="0" outports="1">
+		<node id="0" type="Ports" x="0" y="179" output_0="out" output_1="out" output_2="out" nr_inputs="0" nr_outputs="3" />
+		<node id="1" type="Ports" x="562" y="240" input_0="in" input_1="in" nr_inputs="2" nr_outputs="0" />
+		<node id="2" type="Group" x="210" y="171" name="ADD" input_0="in0" input_1="in1" output_0="carry" output_1="result" nr_inputs="2" nr_outputs="2" inports="0" outports="1">
+			<node id="0" type="Ports" x="0" y="133" output_0="out" output_1="out" nr_inputs="0" nr_outputs="2" />
+			<node id="1" type="Ports" x="512" y="134" input_0="carry" input_1="result" nr_inputs="2" nr_outputs="0" />
+			<node id="2" type="And" x="257" y="145" input_0="in0" input_1="in1" output_0="out" />
+			<node id="3" type="Xor" x="260" y="227" input_0="in0" input_1="in1" output_0="out" />
+			<connection id="0" from="0" out="0" to="2" in="0" />
+			<connection id="1" from="0" out="1" to="2" in="1" />
+			<connection id="2" from="0" out="0" to="3" in="0" />
+			<connection id="3" from="0" out="1" to="3" in="1" />
+			<connection id="4" from="3" out="0" to="1" in="1" />
+			<connection id="5" from="2" out="0" to="1" in="0" />
+		</node>
+		<node id="3" type="Group" x="256" y="318" name="ADD" input_0="in0" input_1="in1" output_0="carry" output_1="result" nr_inputs="2" nr_outputs="2" inports="0" outports="1">
+			<node id="0" type="Ports" x="0" y="133" output_0="out" output_1="out" nr_inputs="0" nr_outputs="2" />
+			<node id="1" type="Ports" x="512" y="134" input_0="carry" input_1="result" nr_inputs="2" nr_outputs="0" />
+			<node id="2" type="And" x="257" y="145" input_0="in0" input_1="in1" output_0="out" />
+			<node id="3" type="Xor" x="260" y="227" input_0="in0" input_1="in1" output_0="out" />
+			<connection id="0" from="0" out="0" to="2" in="0" />
+			<connection id="1" from="0" out="1" to="2" in="1" />
+			<connection id="2" from="0" out="0" to="3" in="0" />
+			<connection id="3" from="0" out="1" to="3" in="1" />
+			<connection id="4" from="3" out="0" to="1" in="1" />
+			<connection id="5" from="2" out="0" to="1" in="0" />
+		</node>
+		<node id="4" type="Or" x="385" y="155" input_0="in0" input_1="in1" output_0="out" />
+		<connection id="0" from="2" out="1" to="3" in="0" />
+		<connection id="1" from="2" out="0" to="4" in="0" />
+		<connection id="2" from="3" out="0" to="4" in="1" />
+		<connection id="3" from="0" out="0" to="2" in="0" />
+		<connection id="4" from="0" out="1" to="2" in="1" />
+		<connection id="5" from="0" out="0" to="2" in="0" />
+		<connection id="6" from="0" out="1" to="2" in="1" />
+		<connection id="7" from="0" out="2" to="3" in="1" />
+		<connection id="8" from="3" out="1" to="1" in="1" />
+		<connection id="9" from="4" out="0" to="1" in="0" />
+	</node>
+	<node id="5" type="BitInput" x="81" y="191" name="A-low" output_0="out">
+		<val type="bit" value="1" />
+	</node>
+	<node id="6" type="BitInput" x="81" y="451" name="B-low" output_0="out">
+		<val type="bit" value="1" />
+	</node>
+	<node id="7" type="BitOutput" x="615" y="420" name="Result-low" input_0="in" />
+	<node id="8" type="BitInput" x="84" y="579" name="Carry" output_0="out">
+		<val type="bit" value="0" />
+	</node>
+	<node id="9" type="Group" x="337" y="444" name="ADC" input_0="in0" input_1="in1" input_2="carry" output_0="carry" output_1="result" nr_inputs="3" nr_outputs="2" inports="0" outports="1">
+		<node id="0" type="Ports" x="0" y="179" output_0="out" output_1="out" output_2="out" nr_inputs="0" nr_outputs="3" />
+		<node id="1" type="Ports" x="562" y="240" input_0="in" input_1="in" nr_inputs="2" nr_outputs="0" />
+		<node id="2" type="Group" x="210" y="171" name="ADD" input_0="in0" input_1="in1" output_0="carry" output_1="result" nr_inputs="2" nr_outputs="2" inports="0" outports="1">
+			<node id="0" type="Ports" x="0" y="133" output_0="out" output_1="out" nr_inputs="0" nr_outputs="2" />
+			<node id="1" type="Ports" x="512" y="134" input_0="carry" input_1="result" nr_inputs="2" nr_outputs="0" />
+			<node id="2" type="And" x="257" y="145" input_0="in0" input_1="in1" output_0="out" />
+			<node id="3" type="Xor" x="260" y="227" input_0="in0" input_1="in1" output_0="out" />
+			<connection id="0" from="0" out="0" to="2" in="0" />
+			<connection id="1" from="0" out="1" to="2" in="1" />
+			<connection id="2" from="0" out="0" to="3" in="0" />
+			<connection id="3" from="0" out="1" to="3" in="1" />
+			<connection id="4" from="3" out="0" to="1" in="1" />
+			<connection id="5" from="2" out="0" to="1" in="0" />
+		</node>
+		<node id="3" type="Group" x="256" y="318" name="ADD" input_0="in0" input_1="in1" output_0="carry" output_1="result" nr_inputs="2" nr_outputs="2" inports="0" outports="1">
+			<node id="0" type="Ports" x="0" y="133" output_0="out" output_1="out" nr_inputs="0" nr_outputs="2" />
+			<node id="1" type="Ports" x="512" y="134" input_0="carry" input_1="result" nr_inputs="2" nr_outputs="0" />
+			<node id="2" type="And" x="257" y="145" input_0="in0" input_1="in1" output_0="out" />
+			<node id="3" type="Xor" x="260" y="227" input_0="in0" input_1="in1" output_0="out" />
+			<connection id="0" from="0" out="0" to="2" in="0" />
+			<connection id="1" from="0" out="1" to="2" in="1" />
+			<connection id="2" from="0" out="0" to="3" in="0" />
+			<connection id="3" from="0" out="1" to="3" in="1" />
+			<connection id="4" from="3" out="0" to="1" in="1" />
+			<connection id="5" from="2" out="0" to="1" in="0" />
+		</node>
+		<node id="4" type="Or" x="385" y="155" input_0="in0" input_1="in1" output_0="out" />
+		<connection id="0" from="2" out="1" to="3" in="0" />
+		<connection id="1" from="2" out="0" to="4" in="0" />
+		<connection id="2" from="3" out="0" to="4" in="1" />
+		<connection id="3" from="0" out="0" to="2" in="0" />
+		<connection id="4" from="0" out="1" to="2" in="1" />
+		<connection id="5" from="0" out="0" to="2" in="0" />
+		<connection id="6" from="0" out="1" to="2" in="1" />
+		<connection id="7" from="0" out="2" to="3" in="1" />
+		<connection id="8" from="3" out="1" to="1" in="1" />
+		<connection id="9" from="4" out="0" to="1" in="0" />
+	</node>
+	<node id="10" type="BitInput" x="79" y="105" name="A-high" output_0="out">
+		<val type="bit" value="1" />
+	</node>
+	<node id="11" type="BitInput" x="82" y="366" name="B-high" output_0="out">
+		<val type="bit" value="1" />
+	</node>
+	<node id="12" type="BitOutput" x="612" y="321" name="Result-high" input_0="in" />
+	<node id="13" type="Group" x="335" y="298" name="ADC" input_0="in0" input_1="in1" input_2="carry" output_0="carry" output_1="result" nr_inputs="3" nr_outputs="2" inports="0" outports="1">
+		<node id="0" type="Ports" x="0" y="179" output_0="out" output_1="out" output_2="out" nr_inputs="0" nr_outputs="3" />
+		<node id="1" type="Ports" x="562" y="240" input_0="in" input_1="in" nr_inputs="2" nr_outputs="0" />
+		<node id="2" type="Group" x="210" y="171" name="ADD" input_0="in0" input_1="in1" output_0="carry" output_1="result" nr_inputs="2" nr_outputs="2" inports="0" outports="1">
+			<node id="0" type="Ports" x="0" y="133" output_0="out" output_1="out" nr_inputs="0" nr_outputs="2" />
+			<node id="1" type="Ports" x="512" y="134" input_0="carry" input_1="result" nr_inputs="2" nr_outputs="0" />
+			<node id="2" type="And" x="257" y="145" input_0="in0" input_1="in1" output_0="out" />
+			<node id="3" type="Xor" x="260" y="227" input_0="in0" input_1="in1" output_0="out" />
+			<connection id="0" from="0" out="0" to="2" in="0" />
+			<connection id="1" from="0" out="1" to="2" in="1" />
+			<connection id="2" from="0" out="0" to="3" in="0" />
+			<connection id="3" from="0" out="1" to="3" in="1" />
+			<connection id="4" from="3" out="0" to="1" in="1" />
+			<connection id="5" from="2" out="0" to="1" in="0" />
+		</node>
+		<node id="3" type="Group" x="256" y="318" name="ADD" input_0="in0" input_1="in1" output_0="carry" output_1="result" nr_inputs="2" nr_outputs="2" inports="0" outports="1">
+			<node id="0" type="Ports" x="0" y="133" output_0="out" output_1="out" nr_inputs="0" nr_outputs="2" />
+			<node id="1" type="Ports" x="512" y="134" input_0="carry" input_1="result" nr_inputs="2" nr_outputs="0" />
+			<node id="2" type="And" x="257" y="145" input_0="in0" input_1="in1" output_0="out" />
+			<node id="3" type="Xor" x="260" y="227" input_0="in0" input_1="in1" output_0="out" />
+			<connection id="0" from="0" out="0" to="2" in="0" />
+			<connection id="1" from="0" out="1" to="2" in="1" />
+			<connection id="2" from="0" out="0" to="3" in="0" />
+			<connection id="3" from="0" out="1" to="3" in="1" />
+			<connection id="4" from="3" out="0" to="1" in="1" />
+			<connection id="5" from="2" out="0" to="1" in="0" />
+		</node>
+		<node id="4" type="Or" x="385" y="155" input_0="in0" input_1="in1" output_0="out" />
+		<connection id="0" from="2" out="1" to="3" in="0" />
+		<connection id="1" from="2" out="0" to="4" in="0" />
+		<connection id="2" from="3" out="0" to="4" in="1" />
+		<connection id="3" from="0" out="0" to="2" in="0" />
+		<connection id="4" from="0" out="1" to="2" in="1" />
+		<connection id="5" from="0" out="0" to="2" in="0" />
+		<connection id="6" from="0" out="1" to="2" in="1" />
+		<connection id="7" from="0" out="2" to="3" in="1" />
+		<connection id="8" from="3" out="1" to="1" in="1" />
+		<connection id="9" from="4" out="0" to="1" in="0" />
+	</node>
+	<node id="14" type="BitInput" x="75" y="57" name="A-high" output_0="out">
+		<val type="bit" value="0" />
+	</node>
+	<node id="15" type="BitInput" x="79" y="330" name="B-high" output_0="out">
+		<val type="bit" value="0" />
+	</node>
+	<node id="16" type="BitOutput" x="610" y="264" name="Result-high" input_0="in" />
+	<node id="17" type="Group" x="325" y="229" name="ADC" input_0="in0" input_1="in1" input_2="carry" output_0="carry" output_1="result" nr_inputs="3" nr_outputs="2" inports="0" outports="1">
+		<node id="0" type="Ports" x="0" y="179" output_0="out" output_1="out" output_2="out" nr_inputs="0" nr_outputs="3" />
+		<node id="1" type="Ports" x="562" y="240" input_0="in" input_1="in" nr_inputs="2" nr_outputs="0" />
+		<node id="2" type="Group" x="210" y="171" name="ADD" input_0="in0" input_1="in1" output_0="carry" output_1="result" nr_inputs="2" nr_outputs="2" inports="0" outports="1">
+			<node id="0" type="Ports" x="0" y="133" output_0="out" output_1="out" nr_inputs="0" nr_outputs="2" />
+			<node id="1" type="Ports" x="512" y="134" input_0="carry" input_1="result" nr_inputs="2" nr_outputs="0" />
+			<node id="2" type="And" x="257" y="145" input_0="in0" input_1="in1" output_0="out" />
+			<node id="3" type="Xor" x="260" y="227" input_0="in0" input_1="in1" output_0="out" />
+			<connection id="0" from="0" out="0" to="2" in="0" />
+			<connection id="1" from="0" out="1" to="2" in="1" />
+			<connection id="2" from="0" out="0" to="3" in="0" />
+			<connection id="3" from="0" out="1" to="3" in="1" />
+			<connection id="4" from="3" out="0" to="1" in="1" />
+			<connection id="5" from="2" out="0" to="1" in="0" />
+		</node>
+		<node id="3" type="Group" x="256" y="318" name="ADD" input_0="in0" input_1="in1" output_0="carry" output_1="result" nr_inputs="2" nr_outputs="2" inports="0" outports="1">
+			<node id="0" type="Ports" x="0" y="133" output_0="out" output_1="out" nr_inputs="0" nr_outputs="2" />
+			<node id="1" type="Ports" x="512" y="134" input_0="carry" input_1="result" nr_inputs="2" nr_outputs="0" />
+			<node id="2" type="And" x="257" y="145" input_0="in0" input_1="in1" output_0="out" />
+			<node id="3" type="Xor" x="260" y="227" input_0="in0" input_1="in1" output_0="out" />
+			<connection id="0" from="0" out="0" to="2" in="0" />
+			<connection id="1" from="0" out="1" to="2" in="1" />
+			<connection id="2" from="0" out="0" to="3" in="0" />
+			<connection id="3" from="0" out="1" to="3" in="1" />
+			<connection id="4" from="3" out="0" to="1" in="1" />
+			<connection id="5" from="2" out="0" to="1" in="0" />
+		</node>
+		<node id="4" type="Or" x="385" y="155" input_0="in0" input_1="in1" output_0="out" />
+		<connection id="0" from="2" out="1" to="3" in="0" />
+		<connection id="1" from="2" out="0" to="4" in="0" />
+		<connection id="2" from="3" out="0" to="4" in="1" />
+		<connection id="3" from="0" out="0" to="2" in="0" />
+		<connection id="4" from="0" out="1" to="2" in="1" />
+		<connection id="5" from="0" out="0" to="2" in="0" />
+		<connection id="6" from="0" out="1" to="2" in="1" />
+		<connection id="7" from="0" out="2" to="3" in="1" />
+		<connection id="8" from="3" out="1" to="1" in="1" />
+		<connection id="9" from="4" out="0" to="1" in="0" />
+	</node>
+	<connection id="0" from="0" out="0" to="4" in="0" />
+	<connection id="1" from="1" out="0" to="4" in="1" />
+	<connection id="2" from="0" out="0" to="4" in="0" />
+	<connection id="3" from="1" out="0" to="4" in="1" />
+	<connection id="4" from="4" out="1" to="3" in="0" />
+	<connection id="5" from="6" out="0" to="9" in="1" />
+	<connection id="6" from="8" out="0" to="9" in="2" />
+	<connection id="7" from="9" out="1" to="7" in="0" />
+	<connection id="8" from="9" out="0" to="4" in="2" />
+	<connection id="9" from="10" out="0" to="13" in="0" />
+	<connection id="10" from="11" out="0" to="13" in="1" />
+	<connection id="11" from="4" out="0" to="13" in="2" />
+	<connection id="12" from="13" out="1" to="12" in="0" />
+	<connection id="13" from="15" out="0" to="17" in="1" />
+	<connection id="14" from="14" out="0" to="17" in="0" />
+	<connection id="15" from="13" out="0" to="17" in="2" />
+	<connection id="16" from="17" out="1" to="16" in="0" />
+	<connection id="17" from="17" out="0" to="2" in="0" />
+	<connection id="18" from="5" out="0" to="9" in="0" />
 </graph>

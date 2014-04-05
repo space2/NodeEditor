@@ -814,3 +814,11 @@ void Workspace::ungroup_selected()
 {
 	// TODO
 }
+
+int Workspace::swap_slots(Node * node, int output, int idx0, int idx1)
+{
+	if (!node->swap_slots(output, idx0, idx1)) return 0;
+	_group->swap_slots(node, output, idx0, idx1);
+	redraw();
+	return 1;
+}

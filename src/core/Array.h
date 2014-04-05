@@ -118,6 +118,13 @@ public:
 			}
 		}
 	}
+
+	void swap(int idx0, int idx1) {
+		T tmp = _data[idx0];
+		_data[idx0] = _data[idx1];
+		_data[idx1] = tmp;
+	}
+
 };
 
 template<typename T>

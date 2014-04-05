@@ -24,7 +24,7 @@ public:
 	void parent(Group * parent) { _parent = parent; }
 
 	virtual const char * type() const = 0;
-	virtual int can_be_removed() const { return 1; };
+	virtual int can_be_removed() const { return 1; }
 	virtual Node * clone();
 
 	const char * name() const { return _name.empty() ? type() : _name.get(); }
@@ -54,6 +54,9 @@ public:
 	int input_y(int idx) const;
 	int output_x(int idx) const;
 	int output_y(int idx) const;
+
+	virtual int can_reorder_slots() const { return 0; }
+	virtual int swap_slots(int output, int idx0, int idx1);
 
 	int find_input(int x, int y);
 	int find_output(int x, int y);

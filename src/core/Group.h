@@ -42,6 +42,10 @@ public:
 	void add_inports(GroupPorts * ports);
 	void add_outports(GroupPorts * ports);
 
+	virtual int can_reorder_slots() const { return 1; }
+	virtual int swap_slots(int output, int idx0, int idx1);
+	int swap_slots(Node * node, int output, int idx0, int idx1);
+
 	virtual int calc();
 
 private:

@@ -168,3 +168,14 @@ int Node::edit()
 	}
 	return 0;
 }
+
+int Node::swap_slots(int output, int idx0, int idx1)
+{
+	if (idx0 == idx1) return 0;
+	if (output) {
+		_outputs.swap(idx0, idx1);
+	} else {
+		_inputs.swap(idx0, idx1);
+	}
+	return 1;
+}

@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include <assert.h>
+
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
 #include <FL/fl_ask.H>
@@ -22,6 +24,54 @@ static Fl_Native_File_Chooser file_chooser;
 static Node * selected_node = NULL;
 static Group * _selected_group = NULL;
 
+static const char * kDummyDndText = "(DUMMY)";
+
+class DraggableSlotName;
+
+static DraggableSlotName * _dnd_slot_start = NULL;
+
+class DraggableSlotName : public Fl_Group
+{
+public:
+	DraggableSlotName(int x, int y, int w, int h, Node * node, int output, int idx)
+		: Fl_Group(x, y, w, h, 0), _node(node), _output(output), _idx(idx)
+	{}
+protected:
+	int handle(int event) {
+		switch (event) {
+		case FL_PUSH:
+			if (Fl_Group::handle(event) == 0 && _node->can_reorder_slots()) {
+				// No child handled it
+				_dnd_slot_start = this;
+				Fl::copy(kDummyDndText, strlen(kDummyDndText), 0);
+				Fl::dnd();
+				return 1;
+			}
+			break;
+		case FL_DND_ENTER:
+		case FL_DND_DRAG:
+		case FL_DND_RELEASE:
+			return 1;
+			break;
+		case FL_PASTE:
+			if (0 == strcmp(kDummyDndText, Fl::event_text()) && _dnd_slot_start) {
+				if (_node->can_reorder_slots()) {
+					if (_dnd_slot_start->_node == _node && _dnd_slot_start->_output == _output) {
+						ui.workspace->swap_slots(_node, _output, _dnd_slot_start->_idx, _idx);
+					}
+				}
+				return 1;
+			}
+			_dnd_slot_start = NULL;
+			break;
+		}
+		return Fl_Group::handle(event);
+	}
+private:
+	Node * _node;
+	int _output, _idx;
+};
+
 static void cb_port_name_changed(Fl_Widget * w, void * data)
 {
 	Slot * slot = (Slot *)data;
@@ -40,11 +90,13 @@ static void cb_gate_name_changed(Fl_Widget * w, void * data)
 	ui.workspace->redraw();
 }
 
-static void add_gate_name_property(int x, int y, const char * prefix, int idx, Slot * slot)
+static void add_gate_name_property(int x, int y, int output, int idx, Slot * slot)
 {
 	char label[32];
-	sprintf(label, "%s#%d", prefix, idx);
+	sprintf(label, "%s#%d", output ? "Output" : "Input", idx);
+	DraggableSlotName * grp = new DraggableSlotName(x, y, kPropertyLabelWidth + kPropertyValueWidth, kPropertyHeight, selected_node, output, idx);
 	Fl_Input * value_w = new Fl_Input(x + kPropertyLabelWidth, y, kPropertyValueWidth, kPropertyHeight);
+	grp->end();
 	value_w->callback(cb_port_name_changed, slot);
 	value_w->when(FL_WHEN_ENTER_KEY_CHANGED);
 	value_w->copy_label(label);
@@ -69,13 +121,13 @@ static void show_properties(Node * node)
 
 	// Add input names
 	for (int i = 0; i < node->input_count(); i++) {
-		add_gate_name_property(x, y, "Input", i+1, node->input(i));
+		add_gate_name_property(x, y, 0, i, node->input(i));
 		y += kPropertyHeight;
 	}
 
 	// Add output names
 	for (int i = 0; i < node->output_count(); i++) {
-		add_gate_name_property(x, y, "Output", i+1, node->output(i));
+		add_gate_name_property(x, y, 1, i, node->output(i));
 		y += kPropertyHeight;
 	}
 
@@ -237,6 +289,7 @@ static void cb_workspace(Workspace::CallbackEvent event, Node * param)
 	if (event == Workspace::NodeSelected) {
 		show_properties(param);
 		check_selected_group(param);
+		_dnd_slot_start = NULL;
 	}
 }
 
