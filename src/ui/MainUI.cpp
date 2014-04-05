@@ -4,6 +4,7 @@
 
 Fl_Menu_Item MainUI::menu_[] = {
  {"&File", 0,  0, 0, 64, FL_NORMAL_LABEL, 0, 14, 0},
+ {"&New", 0x40006e,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {"&Open...", 0x40006f,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {"&Save", 0x400073,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {"Save &as...", 0x410073,  0, 0, 128, FL_NORMAL_LABEL, 0, 14, 0},
@@ -21,18 +22,19 @@ Fl_Menu_Item MainUI::menu_[] = {
  {0,0,0,0,0,0,0,0,0},
  {0,0,0,0,0,0,0,0,0}
 };
-Fl_Menu_Item* MainUI::mnu_file_open = MainUI::menu_ + 1;
-Fl_Menu_Item* MainUI::mnu_file_save = MainUI::menu_ + 2;
-Fl_Menu_Item* MainUI::mnu_file_saveas = MainUI::menu_ + 3;
-Fl_Menu_Item* MainUI::mnu_file_exit = MainUI::menu_ + 4;
-Fl_Menu_Item* MainUI::mnu_edit_select_all = MainUI::menu_ + 7;
-Fl_Menu_Item* MainUI::mnu_edit_select_none = MainUI::menu_ + 8;
-Fl_Menu_Item* MainUI::mnu_edit_cut = MainUI::menu_ + 9;
-Fl_Menu_Item* MainUI::mnu_edit_copy = MainUI::menu_ + 10;
-Fl_Menu_Item* MainUI::mnu_edit_paste = MainUI::menu_ + 11;
-Fl_Menu_Item* MainUI::mnu_edit_dup = MainUI::menu_ + 12;
-Fl_Menu_Item* MainUI::mnu_edit_group = MainUI::menu_ + 13;
-Fl_Menu_Item* MainUI::mnu_edit_ungroup = MainUI::menu_ + 14;
+Fl_Menu_Item* MainUI::mnu_file_new = MainUI::menu_ + 1;
+Fl_Menu_Item* MainUI::mnu_file_open = MainUI::menu_ + 2;
+Fl_Menu_Item* MainUI::mnu_file_save = MainUI::menu_ + 3;
+Fl_Menu_Item* MainUI::mnu_file_saveas = MainUI::menu_ + 4;
+Fl_Menu_Item* MainUI::mnu_file_exit = MainUI::menu_ + 5;
+Fl_Menu_Item* MainUI::mnu_edit_select_all = MainUI::menu_ + 8;
+Fl_Menu_Item* MainUI::mnu_edit_select_none = MainUI::menu_ + 9;
+Fl_Menu_Item* MainUI::mnu_edit_cut = MainUI::menu_ + 10;
+Fl_Menu_Item* MainUI::mnu_edit_copy = MainUI::menu_ + 11;
+Fl_Menu_Item* MainUI::mnu_edit_paste = MainUI::menu_ + 12;
+Fl_Menu_Item* MainUI::mnu_edit_dup = MainUI::menu_ + 13;
+Fl_Menu_Item* MainUI::mnu_edit_group = MainUI::menu_ + 14;
+Fl_Menu_Item* MainUI::mnu_edit_ungroup = MainUI::menu_ + 15;
 
 Fl_Double_Window* MainUI::make_window() {
   { window = new Fl_Double_Window(800, 600, "NodeEditor");

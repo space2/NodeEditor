@@ -19,6 +19,7 @@ public:
   Fl_Double_Window *window;
   Workspace *workspace;
   static Fl_Menu_Item menu_[];
+  static Fl_Menu_Item *mnu_file_new;
   static Fl_Menu_Item *mnu_file_open;
   static Fl_Menu_Item *mnu_file_save;
   static Fl_Menu_Item *mnu_file_saveas;

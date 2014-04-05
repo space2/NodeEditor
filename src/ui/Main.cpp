@@ -159,6 +159,21 @@ static void update_window_title()
 	ui.window->label(strdup(buff));
 }
 
+static void cb_win_new(Fl_Widget * w, void * d)
+{
+	// Confirm first
+	if (ui.workspace->graph()->is_dirty()) {
+		int ret = fl_choice("Are you sure you want to create a new file?\nThere are unsaved changes which will be lost!", "Cancel", "Yes", NULL);
+		if (!ret) return;
+	}
+
+	// Pick new file
+	Graph * graph = new Graph();
+	ui.workspace->graph(graph);
+	ui.tb_up->deactivate();
+	update_window_title();
+}
+
 static void cb_win_open(Fl_Widget * w, void * d)
 {
 	// Confirm first
@@ -371,6 +386,7 @@ static void setup_graph()
 
 static void setup_window()
 {
+	ui.mnu_file_new->callback(cb_win_new);
 	ui.mnu_file_open->callback(cb_win_open);
 	ui.mnu_file_save->callback(cb_win_save);
 	ui.mnu_file_saveas->callback(cb_win_save_as);
