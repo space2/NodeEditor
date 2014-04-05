@@ -668,6 +668,10 @@ void Workspace::paste()
 
 void Workspace::duplicate()
 {
+#if 1
+	copy();
+	paste();
+#else
 	unselect_unremovable();
 	if (!_sel_count) {
 		fl_alert("No nodes selected!");
@@ -688,6 +692,7 @@ void Workspace::duplicate()
 	}
 	_group->calc();
 	redraw();
+#endif
 }
 
 void Workspace::remove(Node * node)
