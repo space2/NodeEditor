@@ -25,6 +25,8 @@ public:
 
 	void graph(Graph * graph);
 	Graph * graph() { return _graph; }
+	void group(Group * group);
+	Group * group() { return _group; }
 
 	void scrollbars(Fl_Scrollbar * h, Fl_Scrollbar * v);
 
@@ -36,8 +38,8 @@ public:
 	void duplicate();
 	void select_all();
 	void unselect_all();
-	void group();
-	void ungroup();
+	void group_selected();
+	void ungroup_selected();
 
 	void listener(void (*cb)(CallbackEvent event, Node * param)) { _cb = cb; }
 protected:

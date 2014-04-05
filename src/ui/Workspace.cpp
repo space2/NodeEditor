@@ -110,9 +110,15 @@ void Workspace::graph(Graph * graph)
 {
 	clear();
 	_graph = graph;
-	_group = graph;
+	group(_graph);
+}
+
+void Workspace::group(Group * group)
+{
+	unselect_all();
+	_group = group;
 	set_scrollbar_range();
-	_sel_count = 0;
+	unselect_all();
 	if (_cb) _cb(NodeSelected, NULL);
 	_graph->calc();
 	redraw();
@@ -517,6 +523,7 @@ void Workspace::select_all()
 
 void Workspace::unselect_all()
 {
+	if (!_group) return;
 	for (int i = 0; i < _group->node_count(); i++) {
 		_group->node(i)->selected(0);
 	}
@@ -674,7 +681,7 @@ void Workspace::remove(Node * node)
 	_group->remove(node);
 }
 
-void Workspace::group()
+void Workspace::group_selected()
 {
 	if (!_sel_count) {
 		fl_alert("No nodes selected!");
@@ -757,7 +764,7 @@ void Workspace::group()
 	redraw();
 }
 
-void Workspace::ungroup()
+void Workspace::ungroup_selected()
 {
 	// TODO
 }

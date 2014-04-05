@@ -57,17 +57,27 @@ Fl_Double_Window* MainUI::make_window() {
     } // Fl_Scrollbar* scroll_h
     { scroll_v = new Fl_Scrollbar(565, 20, 15, 565);
     } // Fl_Scrollbar* scroll_v
-    { Fl_Tile* o = new Fl_Tile(580, 20, 220, 580);
-      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-      { node_tree = new Fl_Tree(580, 20, 220, 300);
-      } // Fl_Tree* node_tree
-      { properties = new Fl_Scroll(580, 320, 220, 280);
-        properties->box(FL_DOWN_BOX);
-        properties->color(FL_BACKGROUND2_COLOR);
-        properties->end();
-      } // Fl_Scroll* properties
+    { Fl_Group* o = new Fl_Group(580, 19, 220, 581);
+      { tb_up = new Fl_Button(580, 20, 25, 25, "@8>");
+      } // Fl_Button* tb_up
+      { tb_down = new Fl_Button(775, 20, 25, 25, "@2>");
+      } // Fl_Button* tb_down
+      { Fl_Tile* o = new Fl_Tile(580, 45, 220, 555);
+        o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+        { node_tree = new Fl_Tree(580, 45, 220, 275);
+        } // Fl_Tree* node_tree
+        { properties = new Fl_Scroll(580, 320, 220, 280);
+          properties->box(FL_DOWN_BOX);
+          properties->color(FL_BACKGROUND2_COLOR);
+          properties->end();
+        } // Fl_Scroll* properties
+        o->end();
+        Fl_Group::current()->resizable(o);
+      } // Fl_Tile* o
+      { group_name = new Fl_Box(605, 19, 170, 27);
+      } // Fl_Box* group_name
       o->end();
-    } // Fl_Tile* o
+    } // Fl_Group* o
     window->end();
   } // Fl_Double_Window* window
   return window;

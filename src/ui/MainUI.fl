@@ -83,15 +83,30 @@ class MainUI {open
       Fl_Scrollbar scroll_v {
         xywh {565 20 15 565}
       }
-      Fl_Tile {} {open
-        xywh {580 20 220 580} align 5
+      Fl_Group {} {open
+        xywh {580 19 220 581}
       } {
-        Fl_Tree node_tree {
-          xywh {580 20 220 300}
+        Fl_Button tb_up {
+          label {@8>}
+          xywh {580 20 25 25}
         }
-        Fl_Scroll properties {open
-          xywh {580 320 220 280} box DOWN_BOX color 7
-        } {}
+        Fl_Button tb_down {
+          label {@2>}
+          xywh {775 20 25 25}
+        }
+        Fl_Tile {} {open
+          xywh {580 45 220 555} align 5 resizable
+        } {
+          Fl_Tree node_tree {
+            xywh {580 45 220 275}
+          }
+          Fl_Scroll properties {open
+            xywh {580 320 220 280} box DOWN_BOX color 7
+          } {}
+        }
+        Fl_Box group_name {
+          xywh {605 19 170 27}
+        }
       }
     }
   }

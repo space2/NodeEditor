@@ -20,6 +20,7 @@ static const int kPropertyHeight = 25;
 static MainUI ui;
 static Fl_Native_File_Chooser file_chooser;
 static Node * selected_node = NULL;
+static Group * _selected_group = NULL;
 
 static void cb_port_name_changed(Fl_Widget * w, void * data)
 {
@@ -93,6 +94,7 @@ static void cb_win_open(Fl_Widget * w, void * d)
 			Graph * graph = new Graph();
 			if (graph->load_from_file(fn)) {
 				ui.workspace->graph(graph);
+				ui.tb_up->deactivate();
 				update_window_title();
 			}
 		}
@@ -166,18 +168,55 @@ static void cb_edit_dup(Fl_Widget * w, void * d)
 
 static void cb_edit_group(Fl_Widget * w, void * d)
 {
-	ui.workspace->group();
+	ui.workspace->group_selected();
 }
 
 static void cb_edit_ungroup(Fl_Widget * w, void * d)
 {
-	ui.workspace->ungroup();
+	ui.workspace->ungroup_selected();
+}
+
+static void cb_tb_up(Fl_Widget * w, void * d)
+{
+	Group * group = ui.workspace->group();
+	Group * new_group = group->parent();
+	if (new_group == NULL) {
+		fl_alert("No parent!");
+		return;
+	}
+	ui.workspace->group(new_group);
+	if (new_group->parent()) {
+		ui.tb_up->activate();
+	} else {
+		ui.tb_up->deactivate();
+	}
+}
+
+static void cb_tb_down(Fl_Widget * w, void * d)
+{
+	if (_selected_group == NULL) {
+		fl_alert("No group selected!");
+		return;
+	}
+	ui.workspace->group(_selected_group);
+	ui.tb_up->activate();
+}
+
+static void check_selected_group(Node * param)
+{
+	_selected_group = dynamic_cast<Group*>(param);
+	if (_selected_group) {
+		ui.tb_down->activate();
+	} else {
+		ui.tb_down->deactivate();
+	}
 }
 
 static void cb_workspace(Workspace::CallbackEvent event, Node * param)
 {
 	if (event == Workspace::NodeSelected) {
 		show_properties(param);
+		check_selected_group(param);
 	}
 }
 
@@ -229,6 +268,11 @@ static void setup_window()
 	ui.mnu_edit_dup->callback(cb_edit_dup);
 	ui.mnu_edit_group->callback(cb_edit_group);
 	ui.mnu_edit_ungroup->callback(cb_edit_ungroup);
+
+	ui.tb_up->callback(cb_tb_up);
+	ui.tb_up->deactivate();
+	ui.tb_down->callback(cb_tb_down);
+	ui.tb_down->deactivate();
 
 	ui.workspace->scrollbars(ui.scroll_h, ui.scroll_v);
 	ui.workspace->listener(cb_workspace);

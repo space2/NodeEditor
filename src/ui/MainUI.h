@@ -7,9 +7,12 @@
 #include "Workspace.h"
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Scrollbar.H>
+#include <FL/Fl_Group.H>
+#include <FL/Fl_Button.H>
 #include <FL/Fl_Tile.H>
 #include <FL/Fl_Tree.H>
 #include <FL/Fl_Scroll.H>
+#include <FL/Fl_Box.H>
 
 class MainUI {
 public:
@@ -31,7 +34,10 @@ public:
   static Fl_Menu_Item *mnu_edit_ungroup;
   Fl_Scrollbar *scroll_h;
   Fl_Scrollbar *scroll_v;
+  Fl_Button *tb_up;
+  Fl_Button *tb_down;
   Fl_Tree *node_tree;
   Fl_Scroll *properties;
+  Fl_Box *group_name;
 };
 #endif
